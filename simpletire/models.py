@@ -70,7 +70,7 @@ class Reading(models.Model):
 
     tire = models.ForeignKey(Tire, on_delete=models.CASCADE)
     date = models.DateField()
-    price = models.PositiveSmallIntegerField()
+    price_pennies = models.PositiveSmallIntegerField()
     in_stock = models.BooleanField()
 
 from bs4 import BeautifulSoup
