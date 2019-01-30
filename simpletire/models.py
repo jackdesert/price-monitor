@@ -227,6 +227,54 @@ class Reading(models.Model):
                 f'        in_stock={self.in_stock})')
 
 
+class StatsPresenter:
+    PENNIES_PER_DOLLAR = 100
+
+    @classmethod
+    def tire_stats(cls):
+        tires = Tire.objects.raw(cls._query())
+        output = []
+        for tire in tires:
+            tire_dict = dict(id=tire.id,
+                             name=tire.name,
+                             path=tire.path,
+                             num_readings=tire.num_readings,
+                             min=tire.min_pennies / cls.PENNIES_PER_DOLLAR,
+                             max=tire.max_pennies / cls.PENNIES_PER_DOLLAR,
+                             mean=tire.mean_pennies / cls.PENNIES_PER_DOLLAR,
+                             std=(tire.std_pennies or 0) / cls.PENNIES_PER_DOLLAR,
+                             current=tire.current_pennies / cls.PENNIES_PER_DOLLAR)
+            output.append(tire_dict)
+        return output
+
+
+    @classmethod
+    def _query(cls):
+        return '''
+        SELECT t.id, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
+          JOIN
+            (
+             SELECT
+                tire_id,
+                count(*) as num_readings,
+                avg(price_pennies)  AS mean_pennies,
+                min(price_pennies)  AS min_pennies,
+                max(price_pennies)  AS max_pennies,
+                stddev_samp(price_pennies) AS std_pennies
+              FROM simpletire_reading
+              WHERE in_stock = 't'
+              GROUP BY tire_id
+            ) AS stats
+            ON t.id = stats.tire_id
+
+          JOIN
+            (
+              SELECT DISTINCT ON (tire_id) tire_id, date, price_pennies as current_pennies
+              FROM simpletire_reading
+              ORDER BY tire_id, date DESC
+             ) AS currents
+             ON stats.tire_id = currents.tire_id;'''
+
 
 if __name__ == '__main__':
     eye = Eyeglass()

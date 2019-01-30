@@ -55,8 +55,8 @@ ROOT_URLCONF = 'monitor.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': ['simpletire/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

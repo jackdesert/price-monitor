@@ -1,0 +1,26 @@
+
+Stats Page
+<table>
+    <tr>
+        <th>Num Readings</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>mean</th>
+        <th>stddev</th>
+        <th>min</th>
+        <th>max</th>
+        <th>current</th>
+    </tr>
+    {% for tire in tires %}
+        <tr>
+            <td>{{ tire.num_readings }}</td>
+            <td>{{ tire.id }}</td>
+            <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name }}</a></td>
+            <td>{{ tire.mean    | round(2) }}</td>
+            <td>{{ tire.std     | round(2) }}</td>
+            <td>{{ tire.min     | round | int }}</td>
+            <td>{{ tire.max     | round | int}}</td>
+            <td>{{ tire.current | round | int}}</td>
+        </tr>
+    {% endfor %}
+</table>
