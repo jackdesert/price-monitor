@@ -8,7 +8,7 @@ import ipdb
 
 def stats_view(request):
     context = {}
-    context['tires'] = StatsPresenter.tire_stats()
+    context['tires'] = StatsPresenter.tire_stats_sorted('', False)
     context['base_url'] = Catalog.BASE_URL
 
     return render(request, 'stats.jinja2', context)

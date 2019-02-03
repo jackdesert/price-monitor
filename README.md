@@ -48,38 +48,16 @@ Took 19 minutes for full pass on one tire size. (1194 tires, 481 in stock)
 Backlog
 -------
 
-- Post source code to GitHub
-- Write SQL query to return tire_name, min_price, max_price, stdev_price, mean_price, mode_price for each tire
+- Query from Athena
+  - adapt query to use a window function instead of DISTINCT ON
+    because PrestoDB (Athena's backend) does not support DISTINCT ON
+
 - cron incantation
 - Decide whether only tires currently in stock should be displayed on stats page
 - Decide whether only in-stock readings should be used for calculating mean, max, stddev_samp
   (probably so, as they may ignore prices while it's out of stock)
-
-
-Temp
-----
-
-SELECT stats.tire_id, name, path, num_readings, min, max, mean, std, current FROM simpletire_tire t
-  JOIN
-    (
-     SELECT
-        tire_id,
-        count(*) as num_readings,
-        round(avg(price_pennies)  / 100) AS mean,
-        min(price_pennies) / 100 AS min,
-        max(price_pennies) / 100 AS max,
-        stddev_samp(price_pennies) / 100 AS std
-      FROM simpletire_reading
-      WHERE in_stock = 't'
-      GROUP BY tire_id
-    ) AS stats
-    ON t.id = stats.tire_id
-
-  JOIN
-    (
-      SELECT DISTINCT ON (tire_id) tire_id, date, price_pennies / 100 as current
-      FROM simpletire_reading
-      ORDER BY tire_id, date DESC
-     ) AS currents
-     ON stats.tire_id = currents.tire_id;
+- Consider whether to use the search functionality on simpletire.com to
+  filter by the appropriate tire size. (As opposed to reading the sitemaps)
+  The benefit is that you could sort by price and only show the cheap ones.
+  But then what if a cheap tire goes expensive for a time...now your stats are impure..
 
