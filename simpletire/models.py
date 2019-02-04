@@ -279,6 +279,7 @@ class StatsPresenter:
 
     @classmethod
     def _tires_from_aws_athena(cls):
+        # see http://www.ilkkapeltola.fi/2018/04/simple-way-to-query-amazon-athena-in.html
         client = boto3.client('athena',
                               region_name='us-west-2')
 
@@ -315,6 +316,7 @@ class StatsPresenter:
 
     @classmethod
     def _query_postgres(cls):
+        # Uses postgres-specific "DISTINCT ON"
         return '''
         SELECT t.id, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
           JOIN
@@ -342,6 +344,7 @@ class StatsPresenter:
 
     @classmethod
     def _query_generic(cls):
+        # Uses windowing instead of postgres-specific "DISTINCT ON"
         return '''
         SELECT t.id, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
           JOIN
