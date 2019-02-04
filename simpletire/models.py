@@ -3,10 +3,14 @@ from datetime import date as newdate
 from django.db import models
 import boto3
 import csv
+import io
 import ipdb
+import math
+import pandas
 import re
 import requests
 import sys
+import time
 
 
 class Catalog:
@@ -231,10 +235,14 @@ class Reading(models.Model):
 class StatsPresenter:
     PENNIES_PER_DOLLAR = 100
     DEFAULT_SORT_KEY = 'mean'
+    STATUS_SUCCEEDED = 'SUCCEEDED'
+    POLL_PERIOD_SECONDS = 0.5
+
 
     @classmethod
     def tire_stats(cls):
-        tires = Tire.objects.raw(cls._query_postgres())
+        #tires = cls._tires_from_postgres()
+        tires = cls._tires_from_aws_athena()
         output = []
         for tire in tires:
             tire_dict = dict(id=tire.id,
@@ -246,6 +254,10 @@ class StatsPresenter:
                              mean=tire.mean_pennies / cls.PENNIES_PER_DOLLAR,
                              std=(tire.std_pennies or 0) / cls.PENNIES_PER_DOLLAR,
                              current=tire.current_pennies / cls.PENNIES_PER_DOLLAR)
+
+            if math.isnan(tire_dict['std']):
+                del tire_dict['std']
+
             output.append(tire_dict)
         return output
 
@@ -259,6 +271,46 @@ class StatsPresenter:
         key = lambda x: x[sort_key]
         stats.sort(key=key, reverse=reverse)
         return stats
+
+    @classmethod
+    def _tires_from_postgres(cls):
+        tires = Tire.objects.raw(cls._query_postgres())
+        return tires
+
+    @classmethod
+    def _tires_from_aws_athena(cls):
+        client = boto3.client('athena',
+                              region_name='us-west-2')
+
+
+        response = client.start_query_execution(
+                    QueryString=cls._query_prestodb(),
+                    QueryExecutionContext={ 'Database': 'price_monitor' },
+                    ResultConfiguration={
+                        'OutputLocation': 's3://bip-price-monitor-athena-result-sets/'
+                      }
+                    )
+
+
+        execution_id = response['QueryExecutionId']
+        status = None
+        while status != cls.STATUS_SUCCEEDED:
+            time.sleep(cls.POLL_PERIOD_SECONDS)
+            result = client.get_query_execution(QueryExecutionId = execution_id)
+            status = result['QueryExecution']['Status']['State']
+            print('waiting for query to complete')
+
+
+        s3client = boto3.client('s3')
+
+        obj = s3client.get_object(Bucket='bip-price-monitor-athena-result-sets',
+                                  Key= f'{execution_id}.csv')
+
+        df = pandas.read_csv(io.BytesIO(obj['Body'].read()))
+
+        return df.itertuples()
+
+
 
 
     @classmethod
@@ -335,8 +387,6 @@ class Util:
 
 
 class Publisher:
-    ACCESS_KEY_ID = 'AKIAJAWJQPXLMDRR34TQ'
-    SECRET_ACCESS_KEY = '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'
 
     TIRE_FILE_TEMP_LOCAL = '/tmp/tires.csv'
     READINGS_FILE_TEMP_LOCAL = '/tmp/readings.csv'
@@ -350,8 +400,7 @@ class Publisher:
         cls.write_tires_to_csv()
         cls.write_todays_readings_to_csv()
 
-        s3 = boto3.client('s3', aws_access_key_id=cls.ACCESS_KEY_ID,
-                                aws_secret_access_key=cls.SECRET_ACCESS_KEY)
+        s3 = boto3.client('s3')
 
         s3.upload_file(cls.TIRE_FILE_TEMP_LOCAL,
                        cls.BUCKET_NAME_TIRES,

@@ -14,7 +14,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         Publisher.publish()
-        #cat = Catalog()
-        #cat.fetch_and_write_pages()
-        #self.stdout.write('done')
 
