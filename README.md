@@ -31,7 +31,7 @@ of its pricing. Now I do.
 Install
 -------
 
-    env/bin/pip install psycopg2-binary requests bs4 ipdb lxml jinja2
+    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests
 
 
 Fetch

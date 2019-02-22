@@ -19,11 +19,14 @@ class Catalog:
     SITEMAP = f'{BASE_URL}/sitemap.xml'
     # Format: '205-55r16'
     # (There is only one hyphen)
-    WIDTH = 205
-    ASPECT = 55
-    WHEEL_DIAMETER = 16
+
+    #WIDTH = 205
+    #ASPECT = 55
+    #WHEEL_DIAMETER = 16
     #TIRE_SIZE_REGEX= re.compile('205-55r16.*-tires$')
-    TIRE_SIZE_REGEX= re.compile(f'{WIDTH}-{ASPECT}z?r{WHEEL_DIAMETER}.*-tires$')
+    #TIRE_SIZE_REGEX= re.compile(f'{WIDTH}-{ASPECT}z?r{WHEEL_DIAMETER}.*-tires$')
+
+    TIRE_SIZE_REGEX= re.compile('\d{3}-\d{2}z?r\d{2}.*-tires$')
 
     def __init__(self):
         self.sitemaps = []
@@ -60,8 +63,6 @@ class Catalog:
                     tire = Tire.find_or_initialize_by_path(path)
                     tire.fetch_and_store_current_price()
 
-                    #page = Page(url)
-                    #page.write()
 
 class Fetcher:
     URL_404 = 'https://simpletire.com/errors/error400'
