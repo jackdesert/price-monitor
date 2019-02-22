@@ -125,7 +125,10 @@ class Tire(models.Model):
 
         try:
             price_float = float(checker.price)
-        except ValueError:
+
+        except (TypeError, ValueError):
+            # TypeError happens when checker.price is None
+            # ValueError happens when checker.price is a non-numeric string
             print(f'ERROR: Skipping {self.name} because price not parseable: "{checker.price}"')
             return
 
