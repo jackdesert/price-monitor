@@ -31,7 +31,7 @@ of its pricing. Now I do.
 Install
 -------
 
-    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests
+    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests redis
 
 
 Fetch
@@ -40,10 +40,20 @@ Fetch
     env/bin/python manage.py fetch_current_prices
 
 
-Timings
--------
+Performance
+-----------
 
-Took 19 minutes for full pass on one tire size. (1194 tires, 481 in stock)
+It takes about 500ms to fetch a tire page. That workload is I/O bound.
+
+It takes about 200ms to build the BeautifulSoup document and pull values from it.
+This workload is CPU bound. Based on that, it doesn't make sense to apply more than
+five threads because five threads will keep the CPU busy.
+
+However, regardless of whether 5 or 10 threads are used, the workload is spread across
+all four CPUs, and averages about 30%.
+
+Back when it only processed one tire size, it could do a full pass
+in 19 minutes (single threaded).
 
 Backlog
 -------

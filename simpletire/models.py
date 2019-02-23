@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
+from concurrent import futures
 from datetime import date as newdate
 from django.db import models
+from queue import Queue
 import boto3
 import csv
 import io
@@ -8,10 +10,15 @@ import ipdb
 import math
 import pandas
 import re
+import redis
 import requests
 import sys
 import time
 
+
+# Debugging
+import traceback
+from timeit import default_timer as timer
 
 class Catalog:
 
@@ -28,9 +35,14 @@ class Catalog:
 
     TIRE_SIZE_REGEX= re.compile('\d{3}-\d{2}z?r\d{2}.*-tires$')
 
+    REDIS = redis.StrictRedis(host='localhost', port=6379, db=0)
+    FETCH_COUNT_KEY = 'tire-fetch-count'
+
     def __init__(self):
         self.sitemaps = []
         self._set_sitemaps()
+        self.REDIS.set(self.FETCH_COUNT_KEY, 0)
+        self.readings_to_save = Queue()
 
     def _set_sitemaps(self):
         fetcher = Fetcher(self.SITEMAP)
@@ -47,27 +59,74 @@ class Catalog:
             print(f'  {ss}')
         print('')
 
-    def fetch_and_write_pages(self):
+    def _dictionary_of_existing_tires(self):
+        return { tire.path: tire for tire in Tire.objects.all() }
+
+
+    def _tires_from_sitemaps(self):
+        existing_tires = self._dictionary_of_existing_tires()
+        output = []
         base_url_with_slash = f'{self.BASE_URL}/'
-        for sitemap in self.sitemaps:
+
+        print('SKIPPING SOME SITEMAPS')
+        for sitemap in self.sitemaps[0:1]:
             print(f'Fetching {sitemap}')
             fetcher = Fetcher(sitemap)
             if not fetcher.success:
                 print(f'ERROR fetching particular sitemap: {sitemap}')
                 continue
+            print(f'Building BeautifulSoup Document for {sitemap}')
             doc = BeautifulSoup(fetcher.text, 'lxml')
+            print('Building list of paths')
             for element in doc.find_all('url'):
                 url = element.loc.text
                 if self.TIRE_SIZE_REGEX.search(url):
                     path = url.replace(base_url_with_slash, '')
-                    tire = Tire.find_or_initialize_by_path(path)
-                    tire.fetch_and_store_current_price()
+                    tire = existing_tires.get(path) or Tire(path=path)
+                    output.append(tire)
+            print(f'Done building')
+        return output
+
+    def _increment_fetch_count(self):
+        with self.FETCH_COUNT_LOCK:
+            self.fetch_count += 1
+            return self.fetch_count
+
+    def _fetch_tire_and_build_reading(self, tire):
+        count = self.REDIS.incr(self.FETCH_COUNT_KEY)
+
+        print(f'{count}. Fetching one tire: {tire.path}')
+        try:
+            start = timer()
+            reading = tire.build_reading()
+            finish = timer()
+            print(f'BUILD_READING: {finish - start}')
+            self.readings_to_save.put(reading)
+        except Exception as e:
+            traceback.print_exc()
+
+
+    def fetch_and_write_pages(self):
+        tire_ids_to_skip = Reading.tire_ids_with_readings_today()
+        print(f'{len(tire_ids_to_skip)} tires already have readings today')
+
+        tires_to_fetch = []
+        for tire in self._tires_from_sitemaps():
+            if not tire.id in tire_ids_to_skip:
+                tires_to_fetch.append(tire)
+
+        print('SKIPPING SOME TIRES')
+        #tires_to_fetch = tires_to_fetch[0:100]
+        print(f'{len(tires_to_fetch)} tires will be fetched')
+
+        executor = futures.ThreadPoolExecutor(max_workers=20)
+        executor.map(self._fetch_tire_and_build_reading, tires_to_fetch)
 
 
 class Fetcher:
     URL_404 = 'https://simpletire.com/errors/error400'
     HEADERS = { 'User-Agent': 'Price-Monitor' }
-    TIMEOUT_SECONDS = 1
+    TIMEOUT_SECONDS = 10
 
     class Error404(Exception):
         '''404 Not Found'''
@@ -83,9 +142,12 @@ class Fetcher:
 
     def _fetch(self):
         try:
+            start = timer()
             page = requests.get(self.url,
                                 timeout=self.TIMEOUT_SECONDS,
                                 headers=self.HEADERS)
+            finish = timer()
+            print(f'Fetch: {finish - start}')
         except Exception as ee:
             exception_name = type(ee).__name__
             msg = f'ERROR: {exception_name} accessing {self.url}\n'
@@ -101,18 +163,22 @@ class Fetcher:
 
 
 class Tire(models.Model):
-    path = models.CharField(max_length=200, unique=True)
+    path = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
+
+    class Meta():
+        # This index acts as a unique constraint (probably not required for speed)
+        index_together = ['path']
+
 
     PENNIES_PER_DOLLAR = 100
 
 
-    def fetch_and_store_current_price(self):
+    def build_reading(self):
         today_string = Util.today_string()
-        preexisting = self.reading_set(manager='_default_manager').filter(date=today_string)
-        if preexisting.exists():
-            print(f'Reading already exists for {today_string} and {self.name}')
-            return
+
+        # No need to check if reading exists for today because we
+        # check that before this method is called
 
         url = f'{Catalog.BASE_URL}/{self.path}'
         try:
@@ -125,6 +191,7 @@ class Tire(models.Model):
 
         try:
             price_float = float(checker.price)
+
 
         except (TypeError, ValueError):
             # TypeError happens when checker.price is None
@@ -143,13 +210,14 @@ class Tire(models.Model):
             self.name = checker.name
             self.save()
 
+
+        print(f'Building new reading for {today_string} and {self.name}')
         new_reading = Reading(tire=self,
                               price_pennies=price_pennies,
                               date=today_string,
                               in_stock=in_stock)
-        new_reading.save()
 
-        print(f'Creating new reading for {today_string} and {self.name}')
+        return new_reading
 
     def readings(self):
         return self.reading_set(manager='_default_manager').all()
@@ -161,13 +229,13 @@ class Tire(models.Model):
     def _persisted(self):
         return bool(self.id)
 
-    @classmethod
-    def find_or_initialize_by_path(cls, path):
-        try:
-            tire = cls.objects.get(path=path)
-        except cls.DoesNotExist:
-            tire = Tire(path=path)
-        return tire
+    #@classmethod
+    #def find_or_initialize_by_path(cls, path):
+    #    try:
+    #        tire = cls.objects.get(path=path)
+    #    except cls.DoesNotExist:
+    #        tire = Tire(path=path)
+    #    return tire
 
 
 class PriceChecker:
@@ -228,6 +296,11 @@ class Reading(models.Model):
     date = models.DateField()
     price_pennies = models.PositiveIntegerField()
     in_stock = models.BooleanField()
+
+    @classmethod
+    def tire_ids_with_readings_today(cls):
+        today_string = Util.today_string()
+        return { reading.tire_id for reading in cls.objects.filter(date=today_string) }
 
     def __repr__(self):
         return (f'Reading(tire=<some_tire>\n'
