@@ -42,7 +42,6 @@ class Catalog:
         self.sitemaps = []
         self._set_sitemaps()
         self.REDIS.set(self.FETCH_COUNT_KEY, 0)
-        self.readings_to_save = Queue()
 
     def _set_sitemaps(self):
         fetcher = Fetcher(self.SITEMAP)
@@ -68,8 +67,10 @@ class Catalog:
         output = []
         base_url_with_slash = f'{self.BASE_URL}/'
 
-        print('SKIPPING SOME SITEMAPS')
-        for sitemap in self.sitemaps[0:1]:
+        #print('SKIPPING SOME SITEMAPS')
+        #self.sitemaps = self.sitemaps[0:1]
+
+        for sitemap in self.sitemaps:
             print(f'Fetching {sitemap}')
             fetcher = Fetcher(sitemap)
             if not fetcher.success:
@@ -101,9 +102,10 @@ class Catalog:
             reading = tire.build_reading()
             finish = timer()
             print(f'BUILD_READING: {finish - start}')
-            self.readings_to_save.put(reading)
         except Exception as e:
             traceback.print_exc()
+
+        return reading
 
 
     def fetch_and_write_pages(self):
@@ -115,12 +117,19 @@ class Catalog:
             if not tire.id in tire_ids_to_skip:
                 tires_to_fetch.append(tire)
 
-        print('SKIPPING SOME TIRES')
-        #tires_to_fetch = tires_to_fetch[0:100]
+        #print('SKIPPING SOME TIRES')
+        #tires_to_fetch = tires_to_fetch[0:20]
         print(f'{len(tires_to_fetch)} tires will be fetched')
 
         executor = futures.ThreadPoolExecutor(max_workers=20)
-        executor.map(self._fetch_tire_and_build_reading, tires_to_fetch)
+        results = executor.map(self._fetch_tire_and_build_reading, tires_to_fetch)
+
+        for result in results:
+            if isinstance(result, Reading):
+                print('Saving')
+                result.save()
+            else:
+                print('NOT SAVING because not a Reading. See printed traceback above')
 
 
 class Fetcher:
