@@ -2,9 +2,9 @@
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
 
-from simpletire.models import Tire
-from simpletire.models import Reading
-from simpletire.models import Catalog
+from simpletire.models.tire import Tire
+from simpletire.models.reading import Reading
+from simpletire.models.catalog import Catalog
 
 import pdb
 
