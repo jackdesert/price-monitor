@@ -4,8 +4,6 @@ import math
 import pandas
 
 class StatsPresenter:
-    class Meta:
-        app_label = 'simpletire'
 
     PENNIES_PER_DOLLAR = 100
     DEFAULT_SORT_KEY = 'mean'

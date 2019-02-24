@@ -10,8 +10,6 @@ import traceback
 
 
 class Catalog:
-    class Meta:
-        app_label = 'simpletire'
 
     SITEMAP = f'{Util.BASE_URL}/sitemap.xml'
     # Format: '205-55r16'

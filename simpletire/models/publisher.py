@@ -1,8 +1,6 @@
 import ipdb
 
 class Publisher:
-    class Meta:
-        app_label = 'simpletire'
 
     TIRE_FILE_TEMP_LOCAL = '/tmp/tires.csv'
     READINGS_FILE_TEMP_LOCAL = '/tmp/readings.csv'

@@ -3,8 +3,6 @@ import ipdb
 from .fetcher import Fetcher
 
 class PriceChecker:
-    class Meta:
-        app_label = 'simpletire'
 
     class UndefinedProperty(Exception):
         '''Price, InStock, and Name are undefined because you were unable to fetch'''

@@ -3,8 +3,6 @@ import requests
 import sys
 
 class Fetcher:
-    class Meta:
-        app_label = 'simpletire'
 
     URL_404 = 'https://simpletire.com/errors/error400'
     HEADERS = { 'User-Agent': 'Price-Monitor' }

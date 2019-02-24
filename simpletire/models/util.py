@@ -9,10 +9,6 @@ class Util:
     ###############################
 
 
-
-    class Meta:
-        app_label = 'simpletire'
-
     REDIS = redis.StrictRedis(host='localhost', port=6379, db=0)
     RECENT_PREPEND = 'simpletire-404--'
     DURATION_OF_404_IN_SECONDS = 3600 * 24 * 30 # One month
