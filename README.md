@@ -52,8 +52,9 @@ five threads because five threads will keep the CPU busy.
 However, regardless of whether 5 or 10 threads are used, the workload is spread across
 all four CPUs, and averages about 30%.
 
-Back when it only processed one tire size, it could do a full pass
-in 19 minutes (single threaded).
+85,000 tires to fetch
+Processes about 3/second
+Estimated time to completion: 8 hours
 
 Backlog
 -------

@@ -35,13 +35,9 @@ class Catalog:
 
     TIRE_SIZE_REGEX= re.compile('\d{3}-\d{2}z?r\d{2}.*-tires$')
 
-    REDIS = redis.StrictRedis(host='localhost', port=6379, db=0)
-    FETCH_COUNT_KEY = 'tire-fetch-count'
-
     def __init__(self):
         self.sitemaps = []
         self._set_sitemaps()
-        self.REDIS.set(self.FETCH_COUNT_KEY, 0)
 
     def _set_sitemaps(self):
         fetcher = Fetcher(self.SITEMAP)
@@ -94,14 +90,8 @@ class Catalog:
             return self.fetch_count
 
     def _fetch_tire_and_build_reading(self, tire):
-        count = self.REDIS.incr(self.FETCH_COUNT_KEY)
-
-        print(f'{count}. Fetching one tire: {tire.path}')
         try:
-            start = timer()
             reading = tire.build_reading()
-            finish = timer()
-            print(f'BUILD_READING: {finish - start}')
         except Exception as e:
             traceback.print_exc()
 
@@ -112,24 +102,35 @@ class Catalog:
         tire_ids_to_skip = Reading.tire_ids_with_readings_today()
         print(f'{len(tire_ids_to_skip)} tires already have readings today')
 
+        tire_paths_to_skip = Util.recent_404_paths()
+        print(f'{len(tire_paths_to_skip)} tires have 404 in last month')
+
         tires_to_fetch = []
         for tire in self._tires_from_sitemaps():
-            if not tire.id in tire_ids_to_skip:
+            if (tire.id not in tire_ids_to_skip) and (tire.path not in tire_paths_to_skip):
                 tires_to_fetch.append(tire)
 
         #print('SKIPPING SOME TIRES')
-        #tires_to_fetch = tires_to_fetch[0:20]
-        print(f'{len(tires_to_fetch)} tires will be fetched')
+        #tires_to_fetch = tires_to_fetch[0:400]
 
-        executor = futures.ThreadPoolExecutor(max_workers=20)
+        num_tires_to_fetch = len(tires_to_fetch)
+        print(f'{num_tires_to_fetch} tires will be fetched')
+
+        # Using 10 processes loads my quad-core i7 processor (laptop)
+        # to about 80% on each core, leaving room for other things
+        executor = futures.ProcessPoolExecutor(max_workers=10)
         results = executor.map(self._fetch_tire_and_build_reading, tires_to_fetch)
 
-        for result in results:
+        for index, result in enumerate(results):
             if isinstance(result, Reading):
-                print('Saving')
+                msg = f'Saved reading with tire_id {result.tire_id}'
                 result.save()
+            elif isinstance(result, Fetcher.Error404):
+                msg = 'NOT SAVED: Error404'
             else:
-                print('NOT SAVING because not a Reading. See printed traceback above')
+                msg = f'NOT SAVING: {result}'
+
+            print(f'{index}/{num_tires_to_fetch}. {msg}')
 
 
 class Fetcher:
@@ -156,7 +157,7 @@ class Fetcher:
                                 timeout=self.TIMEOUT_SECONDS,
                                 headers=self.HEADERS)
             finish = timer()
-            print(f'Fetch: {finish - start}')
+            #print(f'Fetch: {finish - start}')
         except Exception as ee:
             exception_name = type(ee).__name__
             msg = f'ERROR: {exception_name} accessing {self.url}\n'
@@ -192,21 +193,24 @@ class Tire(models.Model):
         url = f'{Catalog.BASE_URL}/{self.path}'
         try:
             checker = PriceChecker(url)
-        except Fetcher.Error404:
-            return
+        except Fetcher.Error404 as ee:
+            print(f'Storing as 404: {self.path}')
+            Util.store_path_as_404(self.path)
+            return ee
 
         if not checker.success:
-            return
+            return 'not checker success'
 
         try:
             price_float = float(checker.price)
 
 
-        except (TypeError, ValueError):
+        except (TypeError, ValueError) as ee:
             # TypeError happens when checker.price is None
             # ValueError happens when checker.price is a non-numeric string
             print(f'ERROR: Skipping {self.name} because price not parseable: "{checker.price}"')
-            return
+
+            return ee
 
         price_pennies = round(price_float * self.PENNIES_PER_DOLLAR)
         in_stock = checker.in_stock
@@ -220,7 +224,7 @@ class Tire(models.Model):
             self.save()
 
 
-        print(f'Building new reading for {today_string} and {self.name}')
+        #print(f'Building new reading for {today_string} and {self.name}')
         new_reading = Reading(tire=self,
                               price_pennies=price_pennies,
                               date=today_string,
@@ -470,9 +474,42 @@ class StatsPresenter:
 
 
 class Util:
+
+    REDIS = redis.StrictRedis(host='localhost', port=6379, db=0)
+    RECENT_PREPEND = 'simpletire-404--'
+    DURATION_OF_404_IN_SECONDS = 3600 * 24 * 30 # One month
+
     @classmethod
     def today_string(cls):
         return newdate.today().strftime('%F')
+
+    @classmethod
+    def recent_404_paths(cls):
+        output = set()
+        cursor = 0
+        while True:
+            cursor, results = cls.REDIS.scan(cursor, match=f'{cls.RECENT_PREPEND}*')
+            for rr in results:
+                key = rr.decode()
+                path = key.replace(cls.RECENT_PREPEND, '')
+                output.add(path)
+            if cursor == 0:
+                break
+
+        return output
+
+    @classmethod
+    def store_path_as_404(cls, path):
+        # If a 404 is returned, don't bother checking that path again for another month
+        key = cls._404_key(path)
+        cls.REDIS.set(key,
+                      '404', # This value could be anything
+                      ex=cls.DURATION_OF_404_IN_SECONDS)
+
+    @classmethod
+    def _404_key(cls, path):
+        return f'{cls.RECENT_PREPEND}{path}'
+
 
 
 class Publisher:
