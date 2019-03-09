@@ -110,7 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# Set to Central time so that datetime.datetime.now() and datetime.date.today()
+# will be based on North America
+TIME_ZONE = 'America/Chicago'
 
 USE_I18N = True
 
