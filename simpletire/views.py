@@ -2,14 +2,23 @@
 
 
 from django.shortcuts import render
-from simpletire.models import StatsPresenter
 from simpletire.models import Catalog
+from simpletire.models import StatsPresenter
+from simpletire.models import Tire
+from simpletire.models import Util
 import ipdb
 
 def stats_view(request):
+
+    regex = Tire.filter_by_size_regex( section_width  = request.GET.get('section_width'),
+                                       profile        = request.GET.get('profile'),
+                                       wheel_diameter = request.GET.get('wheel_diameter'))
+
+    sql_filter = f"WHERE path ~ '{regex}'"
+
     context = {}
-    context['tires'] = StatsPresenter.tire_stats_sorted('', False)
-    context['base_url'] = Catalog.BASE_URL
+    context['base_url'] = Util.BASE_URL
+    context['tires'] = StatsPresenter(sql_filter).tire_stats_sorted('', False)
 
     return render(request, 'stats.jinja2', context)
 
