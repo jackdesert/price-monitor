@@ -3,7 +3,8 @@ import ipdb
 from .util import Util
 from .price_checker import PriceChecker
 from .fetcher import Fetcher
-import simpletire.models.reading as reading
+#from simpletire.models import reading as my_reading
+from simpletire.models import reading 
 
 
 class Tire(models.Model):

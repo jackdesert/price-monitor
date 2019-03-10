@@ -1,0 +1,4 @@
+CMD='sudo systemctl restart price-monitor.service'
+
+echo $CMD
+$CMD

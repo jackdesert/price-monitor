@@ -1,0 +1,4 @@
+CMD='sudo systemctl stop price-monitor.service'
+
+echo $CMD
+$CMD

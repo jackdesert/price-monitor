@@ -1,0 +1,20 @@
+[Unit]
+Description=Price Monitor
+Wants=network.target
+Wants=redis-server.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/price-monitor
+
+ExecStart=/home/ubuntu/price-monitor/env/bin/python manage.py runserver
+
+TimeoutSec=30
+RestartSec=15s
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

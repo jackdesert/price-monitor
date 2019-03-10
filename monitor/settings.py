@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qfm6hghx4($oe&dt@^7ydbz&lpaub1+7)zsj2h6&)lk$fm820&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['tires.jackdesert.com']
 
 
 # Application definition
@@ -79,8 +79,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'price_monitor',
-        'USER': 'postgres',
-        'HOST': '127.0.0.1',
+        'USER': 'ubuntu',
+        #'HOST': '127.0.0.1',
+        'UNIX_SOCKET': '/var/run/postgresql/.s.PGSQL.5432',
         'PORT': '5432',
     }
 }

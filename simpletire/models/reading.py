@@ -4,7 +4,8 @@ from .util import Util
 
 # Import module instead of "from x import X" syntax
 # to avoid circular dependencies
-import simpletire.models.tire as tire
+#from simpletire.models import tire as my_tire
+from simpletire.models import tire 
 
 
 class Reading(models.Model):
