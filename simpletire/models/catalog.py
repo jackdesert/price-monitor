@@ -107,7 +107,7 @@ class Catalog:
 
         # Using 10 processes loads my quad-core i7 processor (laptop)
         # to about 80% on each core, leaving room for other things
-        executor = futures.ProcessPoolExecutor(max_workers=10)
+        executor = futures.ProcessPoolExecutor(max_workers=4)
         results = executor.map(self._fetch_tire_and_build_reading, tires_to_fetch)
 
         for index, result in enumerate(results):
