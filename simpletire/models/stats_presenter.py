@@ -45,6 +45,10 @@ class StatsPresenter:
     def tire_stats_sorted(self, sort_key, reverse):
         stats = self.tire_stats()
 
+        if not stats:
+            # If no tires match your query
+            return stats
+
         if sort_key not in stats[0].keys():
             sort_key = self.DEFAULT_SORT_KEY
 

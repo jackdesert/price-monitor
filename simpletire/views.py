@@ -2,6 +2,7 @@
 
 
 from django.shortcuts import render
+from django.shortcuts import redirect
 from simpletire.models import Catalog
 from simpletire.models import StatsPresenter
 from simpletire.models import Tire
@@ -9,16 +10,48 @@ from simpletire.models import Util
 import ipdb
 
 def stats_view(request):
+    section_width  = request.GET.get('section_width')
+    profile        = request.GET.get('profile')
+    wheel_diameter = request.GET.get('wheel_diameter')
 
-    regex = Tire.filter_by_size_regex( section_width  = request.GET.get('section_width'),
-                                       profile        = request.GET.get('profile'),
-                                       wheel_diameter = request.GET.get('wheel_diameter'))
+    # TODO build a method that checks these lengths
+    error = False
+    if section_width and len(section_width) != 3:
+        error = True
+    if profile and len(profile) != 2:
+        error = True
+    if wheel_diameter and len(wheel_diameter) != 2:
+        error = True
+
+
+    if error:
+        return redirect('/')
+
+    regex = Tire.filter_by_size_regex( section_width  = section_width,
+                                       profile        = profile,
+                                       wheel_diameter = wheel_diameter )
 
     sql_filter = f"WHERE path ~ '{regex}'"
 
+
+    selected = {}
+    if section_width:
+        selected[int(section_width)]  = 'selected'
+    if profile:
+        selected[int(profile)]        = 'selected'
+    if wheel_diameter:
+        selected[int(wheel_diameter)] = 'selected'
+
     context = {}
     context['base_url'] = Util.BASE_URL
-    context['tires'] = StatsPresenter(sql_filter).tire_stats_sorted('', False)
+    context['tires'] = []
+    hint = ''
+    if section_width or profile or wheel_diameter:
+        hint = 'No tires found matching your search criterion'
+        context['tires'] = StatsPresenter(sql_filter).tire_stats_sorted('', False)
+    context['hint'] = hint
+    context['selected'] = selected
+
 
     return render(request, 'stats.jinja2', context)
 

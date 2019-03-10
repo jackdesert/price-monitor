@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="static/style.css" />
+    <title>{% block title %}{% endblock %} Consistent Tires</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        Mashup by Jack Desert
+        {% endblock %}
+    </div>
+</body>
+</html>

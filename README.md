@@ -93,9 +93,9 @@ Estimated time to completion: 8 hours
 Backlog
 -------
 
-- Query from Athena
-  - adapt query to use a window function instead of DISTINCT ON
-    because PrestoDB (Athena's backend) does not support DISTINCT ON
+- When one filter is clicked, disable all filters to wait for the page refresh
+
+
 
 - cron incantation
 - Decide whether only tires currently in stock should be displayed on stats page

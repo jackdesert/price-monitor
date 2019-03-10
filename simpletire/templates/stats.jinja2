@@ -1,28 +1,84 @@
-<table>
-    <tr>
-        <th>Num Readings</th>
-        <th>Name</th>
-        <th>Size</th>
-        <th>Mean Price</th>
-        <th>Std Dev Price</th>
-        <th>Min Price</th>
-        <th>Max Price</th>
-        <th>Current Price</th>
-    </tr>
-    {% for tire in tires %}
+{% extends "layout.jinja2" %}
+{% block content %}
+
+<h1 class='page__title'>Mean Tire Prices</h1>
+<div class='page__subtitle'>
+This site shows you the mean (average) price of a tire over time.
+</div>
+
+<div>
+As a drift enthusiast, you probably want to choose a tire that is consistently inexpensive.
+</div>
+
+
+
+<h2>Specify at Least One Filter:</h2>
+
+<div class='filter'>
+    <label for="section_width">Width</label>
+    <select id="section_width">
+        <option value="">All</option>
+        {% for width in [185, 195, 205, 215, 225, 235, 245, 255, 265, 275, 285, 295] %}
+        <option {{ selected.get(width) }} value="{{ width }}">{{ width }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class='filter'>
+    <label for="profile">Aspect Ratio</label>
+    <select id="profile">
+        <option value="">All</option>
+        {% for profile in [30, 35, 40, 45, 50, 55, 60, 65] %}
+            <option {{ selected.get(profile) }} value="{{ profile }}">{{ profile }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class='filter'>
+    <label for="wheel_diameter">Wheel Diameter</label>
+    <select id="wheel_diameter">
+        <option value="">All</option>
+        {% for diameter in [14, 15, 16, 17, 18, 19, 20] %}
+            <option {{ selected.get(diameter) }} value="{{ diameter }}">{{ diameter }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+
+<script src="static/filters.js"></script>
+{% if tires %}
+    <table>
         <tr>
-            <td>{{ tire.num_readings }}</td>
-            <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name }}</a></td>
-            <td>{{ tire.size }}</td>
-            <td>{{ tire.mean    | round(2) }}</td>
-            <td>
-                {% if tire.std is defined %}
-                    {{ tire.std     | round(2) }}
-                {% endif %}
-            </td>
-            <td>{{ tire.min     | round | int }}</td>
-            <td>{{ tire.max     | round | int}}</td>
-            <td>{{ tire.current | round | int}}</td>
+            <th class='hidden'>Num Readings</th>
+            <th>Size</th>
+            <th>Name</th>
+            <th>Mean Price</th>
+            <th>Standard Deviation</th>
+            <th>Current Price</th>
+            <th>Min Price</th>
+            <th>Max Price</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for tire in tires %}
+            <tr>
+                <td class='hidden'>{{ tire.num_readings }}</td>
+                <td>{{ tire.size }}</td>
+                <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name }}</a></td>
+                <td>{{ tire.mean    | round(2) }}</td>
+                <td>
+                    {% if tire.std is defined %}
+                        {{ tire.std     | round(2) }}
+                    {% endif %}
+                </td>
+                <td>{{ tire.current | round | int}}</td>
+                <td>{{ tire.min     | round | int }}</td>
+                <td>{{ tire.max     | round | int}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <div class='error'>{{ hint }}</div>
+{% endif %}
+
+
+{% endblock %}
+
