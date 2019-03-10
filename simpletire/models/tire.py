@@ -1,5 +1,6 @@
 from django.db import models
-import ipdb
+import pdb
+import re
 from .util import Util
 from .price_checker import PriceChecker
 from .fetcher import Fetcher
@@ -73,6 +74,12 @@ class Tire(models.Model):
 
     def __repr__(self):
         return f'Tire({self.name})'
+
+    @property
+    def size(self):
+        regex = type(self).filter_by_size_regex()
+        matches = re.search(regex, self.path)
+        return f'{matches[1]}/{matches[2]}r{matches[3]}'
 
     @property
     def _persisted(self):

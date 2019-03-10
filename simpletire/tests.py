@@ -86,3 +86,12 @@ class TireTestCase(TestCase):
         tires = Tire.filter_by_size(wheel_diameter=18)
         self.assertEqual(len(tires), 2)
 
+
+    def test_size_1(self):
+        tire = Tire(path='blahblah-225-50zr17blah')
+        self.assertEqual(tire.size, '225/50r17')
+
+    def test_size_2(self):
+        tire = Tire(path='blahblah-235-40r18blah')
+        self.assertEqual(tire.size, '235/40r18')
+

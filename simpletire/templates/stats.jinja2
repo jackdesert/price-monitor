@@ -1,19 +1,19 @@
 <table>
     <tr>
         <th>Num Readings</th>
-        <th>ID</th>
         <th>Name</th>
-        <th>mean</th>
-        <th>stddev</th>
-        <th>min</th>
-        <th>max</th>
-        <th>current</th>
+        <th>Size</th>
+        <th>Mean Price</th>
+        <th>Std Dev Price</th>
+        <th>Min Price</th>
+        <th>Max Price</th>
+        <th>Current Price</th>
     </tr>
     {% for tire in tires %}
         <tr>
             <td>{{ tire.num_readings }}</td>
-            <td>{{ tire.id }}</td>
             <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name }}</a></td>
+            <td>{{ tire.size }}</td>
             <td>{{ tire.mean    | round(2) }}</td>
             <td>
                 {% if tire.std is defined %}

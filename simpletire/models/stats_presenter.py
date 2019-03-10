@@ -24,9 +24,11 @@ class StatsPresenter:
         tires = self._tires_from_postgres()
         output = []
         for tire in tires:
+
             tire_dict = dict(id=tire.id,
                              name=tire.name,
                              path=tire.path,
+                             size=tire.size,
                              num_readings=tire.num_readings,
                              min=tire.min_pennies / self.PENNIES_PER_DOLLAR,
                              max=tire.max_pennies / self.PENNIES_PER_DOLLAR,
