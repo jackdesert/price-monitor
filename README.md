@@ -27,12 +27,46 @@ I wish I had stayed with the Lexanis the whole time, but I didn't have a history
 of its pricing. Now I do.
 
 
+Prerequisites
+-------------
+
+    sudo apt install postgres nginx python3-venv redis
 
 Install
 -------
 
+    cd path/to/repo
+    python3 -m venv env
     env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests redis
 
+
+
+Create Database User
+--------------------
+
+Create a postgresql user that can create databases
+(Database creation is required if you want to run the test suite from that environment)
+
+    sudo -u postgres createuser --createdb ubuntu
+
+
+Create Database
+---------------
+
+    sudo -u postgres createdb price_monitor --owner ubuntu
+
+
+Run Migrations
+--------------
+
+    cd path/to/repo
+    env/bin/python manage.py migrate
+
+
+Run Tests
+---------
+
+    env/bin/python manage.py test
 
 Fetch
 -----
