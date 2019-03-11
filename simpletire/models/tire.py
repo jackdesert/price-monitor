@@ -102,10 +102,10 @@ class Tire(models.Model):
     # This method used in tests to verify regex works in SQL
     @classmethod
     def filter_by_size(cls, section_width=None,
-                            profile=None,
+                            aspect_ratio=None,
                             wheel_diameter=None):
         regex = cls.filter_by_size_regex(section_width=section_width,
-                                         profile=profile,
+                                         aspect_ratio=aspect_ratio,
                                          wheel_diameter=wheel_diameter)
 
         query = f"SELECT * FROM simpletire_tire WHERE path ~ '{regex}'"
@@ -115,20 +115,20 @@ class Tire(models.Model):
     # This method used in view to filter by tire dimension(s)
     @classmethod
     def filter_by_size_regex(cls, section_width=None,
-                                   profile=None,
+                                   aspect_ratio=None,
                                    wheel_diameter=None):
 
-        regex = '(SECTION_WIDTH)-(PROFILE)z?r(WHEEL_DIAMETER)'
+        regex = '(SECTION_WIDTH)-(ASPECT_RATIO)z?r(WHEEL_DIAMETER)'
 
         if section_width:
             section_width_replacer = str(section_width)
         else:
             section_width_replacer = r'\d{3}'
 
-        if profile:
-            profile_replacer = str(profile)
+        if aspect_ratio:
+            aspect_ratio_replacer = str(aspect_ratio)
         else:
-            profile_replacer = r'\d{2}'
+            aspect_ratio_replacer = r'\d{2}'
 
         if wheel_diameter:
             wheel_diameter_replacer = str(wheel_diameter)
@@ -136,7 +136,7 @@ class Tire(models.Model):
             wheel_diameter_replacer = r'\d{2}'
 
         regex = regex.replace('SECTION_WIDTH', section_width_replacer). \
-                      replace('PROFILE',       profile_replacer). \
+                      replace('ASPECT_RATIO',       aspect_ratio_replacer). \
                       replace('WHEEL_DIAMETER', wheel_diameter_replacer)
         return regex
 

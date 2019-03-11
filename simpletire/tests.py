@@ -33,7 +33,7 @@ class TireTestCase(TestCase):
 
     def test_filter_by_size_regex_3(self):
         expected = '(\\d{3})-(45)z?r(\\d{2})'
-        self.assertEqual(expected , Tire.filter_by_size_regex(profile=45))
+        self.assertEqual(expected , Tire.filter_by_size_regex(aspect_ratio=45))
 
     def test_filter_by_size_regex_4(self):
         expected = '(\\d{3})-(\\d{2})z?r(18)'
@@ -63,17 +63,17 @@ class TireTestCase(TestCase):
 
     def test_filter_by_size_3(self):
         self.create_four_tires()
-        tires = Tire.filter_by_size(profile=60)
+        tires = Tire.filter_by_size(aspect_ratio=60)
         self.assertEqual(len(tires), 0)
 
     def test_filter_by_size_3(self):
         self.create_four_tires()
-        tires = Tire.filter_by_size(profile=45)
+        tires = Tire.filter_by_size(aspect_ratio=45)
         self.assertEqual(len(tires), 1)
 
     def test_filter_by_size_4(self):
         self.create_four_tires()
-        tires = Tire.filter_by_size(profile=50)
+        tires = Tire.filter_by_size(aspect_ratio=50)
         self.assertEqual(len(tires), 3)
 
     def test_filter_by_size_5(self):

@@ -25,11 +25,11 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
 </div>
 
 <div class='filter'>
-    <label for="profile">Aspect Ratio</label>
-    <select id="profile">
+    <label for="aspect_ratio">Aspect Ratio</label>
+    <select id="aspect_ratio">
         <option value="">All</option>
-        {% for profile in [30, 35, 40, 45, 50, 55, 60, 65] %}
-            <option {{ selected.get(profile) }} value="{{ profile }}">{{ profile }}</option>
+        {% for aspect_ratio in [30, 35, 40, 45, 50, 55, 60, 65] %}
+            <option {{ selected.get(aspect_ratio) }} value="{{ aspect_ratio }}">{{ aspect_ratio }}</option>
         {% endfor %}
     </select>
 </div>

@@ -1,6 +1,6 @@
 var bindFilters = function(){
     var sectionWidthSelector = document.getElementById('section_width'),
-        profileSelector = document.getElementById('profile'),
+        aspect_ratioSelector = document.getElementById('aspect_ratio'),
         wheelDiameterSelector = document.getElementById('wheel_diameter'),
         allSelectors = document.querySelectorAll('select'),
 
