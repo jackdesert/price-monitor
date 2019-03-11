@@ -5,12 +5,16 @@ from .util import Util
 from .price_checker import PriceChecker
 from .fetcher import Fetcher
 #from simpletire.models import reading as my_reading
-from simpletire.models import reading 
+from simpletire.models import reading
 
 
 class Tire(models.Model):
     path = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
+
+    section_width  = models.SmallIntegerField()
+    wheel_diameter = models.SmallIntegerField()
+    aspect_ratio   = models.SmallIntegerField()
 
     class Meta():
         # This index acts as a unique constraint (probably not required for speed)
@@ -58,6 +62,7 @@ class Tire(models.Model):
                 print(f'New tire: "{checker.name}"')
 
             self.name = checker.name
+            self.set_dimensions()
             self.save()
 
 
@@ -85,6 +90,14 @@ class Tire(models.Model):
     def _persisted(self):
         return bool(self.id)
 
+    def set_dimensions(self):
+        if not self.path:
+            return
+
+        matches = re.search(Util.TIRE_SIZE_REGEX, self.path)
+        self.section_width  = int(matches[1])
+        self.aspect_ratio   = int(matches[2])
+        self.wheel_diameter = int(matches[3])
 
     # This method used in tests to verify regex works in SQL
     @classmethod
@@ -126,6 +139,8 @@ class Tire(models.Model):
                       replace('PROFILE',       profile_replacer). \
                       replace('WHEEL_DIAMETER', wheel_diameter_replacer)
         return regex
+
+
 
 
 

@@ -6,10 +6,15 @@ from simpletire.models import Tire
 class TireTestCase(TestCase):
 
     def create_four_tires(self):
-        tire_1 = Tire(path='blahblah-225-50zr17blah')
-        tire_2 = Tire(path='blahblah-245-45zr18blah')
-        tire_3 = Tire(path='blahblah-205-50zr17blah')
-        tire_4 = Tire(path='blahblah-245-50zr18blah')
+        tire_1 = Tire(path='blahblah-225-50zr17blah-tires')
+        tire_2 = Tire(path='blahblah-245-45zr18blah-tires')
+        tire_3 = Tire(path='blahblah-205-50zr17blah-tires')
+        tire_4 = Tire(path='blahblah-245-50zr18blah-tires')
+
+        tire_1.set_dimensions()
+        tire_2.set_dimensions()
+        tire_3.set_dimensions()
+        tire_4.set_dimensions()
 
         tire_1.save()
         tire_2.save()
@@ -95,3 +100,10 @@ class TireTestCase(TestCase):
         tire = Tire(path='blahblah-235-40r18blah')
         self.assertEqual(tire.size, '235/40r18')
 
+
+    def test_set_dimensions_1(self):
+        tire = Tire(path='blahblah-235-40r18blah-tires')
+        tire.set_dimensions()
+        self.assertEqual(235, tire.section_width)
+        self.assertEqual(40,  tire.aspect_ratio)
+        self.assertEqual(18,  tire.wheel_diameter)

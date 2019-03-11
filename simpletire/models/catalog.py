@@ -15,14 +15,6 @@ class Catalog:
     # Format: '205-55r16'
     # (There is only one hyphen)
 
-    #WIDTH = 205
-    #ASPECT = 55
-    #WHEEL_DIAMETER = 16
-    #TIRE_SIZE_REGEX= re.compile('205-55r16.*-tires$')
-    #TIRE_SIZE_REGEX= re.compile(f'{WIDTH}-{ASPECT}z?r{WHEEL_DIAMETER}.*-tires$')
-
-    TIRE_SIZE_REGEX= re.compile('\d{3}-\d{2}z?r\d{2}.*-tires$')
-
     def __init__(self):
         self.sitemaps = []
         self._set_sitemaps()
@@ -65,7 +57,7 @@ class Catalog:
             print('Building list of paths')
             for element in doc.find_all('url'):
                 url = element.loc.text
-                if self.TIRE_SIZE_REGEX.search(url):
+                if Util.TIRE_SIZE_REGEX.search(url):
                     path = url.replace(base_url_with_slash, '')
                     tire = existing_tires.get(path) or Tire(path=path)
                     output.append(tire)
