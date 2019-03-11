@@ -3,12 +3,13 @@
 <head>
     {% block head %}
     <link rel="stylesheet" href="static/style.css" />
-    <title>{% block title %}{% endblock %} Consistent Tires</title>
+    <title>{% block title %}{% endblock %} Mean Tire Prices</title>
     {% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <div id="content">{% block content %}{% endblock %}</div>
-    <div id="footer">
+    <div class="footer">
         {% block footer %}
         Mashup by Jack Desert
         {% endblock %}

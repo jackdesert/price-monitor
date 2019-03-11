@@ -1,0 +1,57 @@
+{
+  // Enforce
+  "strict"        : true,
+  "curly"         : true,
+  "eqeqeq"        : true,
+  "forin"         : true,
+  "freeze"        : true,
+  "forin"         : true,
+  "freeze"        : true,
+  "funcscope"     : true,
+  "futurehostile" : true,
+  "noarg"         : true,
+  "nocomma"       : true,
+  "nonbsp"        : true,
+  "undef"         : true,
+  "esversion"     : 6,
+
+  // Where is the option to enforce that no logic is used before all variables defined?
+  // _latedef_ is supposed to do something like this, but its behavior
+  // is somehow different.
+
+
+  // Relax
+  "asi"       : true,
+
+  // Environment
+  "jquery"    : true,
+  "devel"     : true,
+  "browser"   : true,
+
+
+  // Globals
+  "globals" : {
+                "HandlebarsTemplates": false,
+                "alertEngineersAndContinue": false,
+                "alertEngineersAndHalt": false,
+                "buildRoleNamesList": false,
+                "dbDateToMonthFirst": false,
+                "getCookieValue": false,
+                "getLocalizedStringsFromDiv": false,
+                "handleAjaxError": false,
+                "hashToArray": false,
+                "hideToastMessage": false,
+                "initRoleSelectorButton": false,
+                "loadRoleDefinitions": false,
+                "localIpDataAsync": false,
+                "monthFirstDateToDb": false,
+                "populateLocalizedStringsToDiv": false,
+                "showToastMessage" : false,
+                "showToastMessageWithDelay": false,
+                "story" : false
+              }
+
+
+
+}
+

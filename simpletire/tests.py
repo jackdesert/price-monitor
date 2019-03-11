@@ -75,7 +75,7 @@ class TireTestCase(TestCase):
 
 
     def test_size(self):
-        tire = Tire(section_width=225, aspect_ration=50, wheel_diameter=17)
+        tire = Tire(section_width=225, aspect_ratio=50, wheel_diameter=17)
         self.assertEqual(tire.size, '225/50r17')
 
     def test_set_dimensions(self):
