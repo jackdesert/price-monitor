@@ -16,6 +16,12 @@ class Tire(models.Model):
     wheel_diameter = models.SmallIntegerField()
     aspect_ratio   = models.SmallIntegerField()
 
+    SPACE = ' '
+    DIMENSIONS = {'section_width', 'aspect_ratio', 'wheel_diameter'}
+    OPERATORS = dict(section_width='>=', aspect_ratio='IN', wheel_diameter='=')
+    ASPECT_RATIO_SPACING = 5
+    DIMENSION_CHAR_COUNT = dict(section_width=3, aspect_ratio=2, wheel_diameter=2)
+
     class Meta():
         # This index acts as a unique constraint (probably not required for speed)
         index_together = ['path']
@@ -82,9 +88,7 @@ class Tire(models.Model):
 
     @property
     def size(self):
-        regex = type(self).filter_by_size_regex()
-        matches = re.search(regex, self.path)
-        return f'{matches[1]}/{matches[2]}r{matches[3]}'
+        return f'{self.section_width}/{self.aspect_ratio}r{self.wheel_diameter}'
 
     @property
     def _persisted(self):
@@ -99,57 +103,37 @@ class Tire(models.Model):
         self.aspect_ratio   = int(matches[2])
         self.wheel_diameter = int(matches[3])
 
-    # This method used in tests to verify regex works in SQL
     @classmethod
-    def filter_by_size(cls, section_width=None,
-                            aspect_ratio=None,
-                            wheel_diameter=None):
-        regex = cls.filter_by_size_regex(section_width=section_width,
-                                         aspect_ratio=aspect_ratio,
-                                         wheel_diameter=wheel_diameter)
+    def valid_dimensions(cls, dimensions):
+        for dimension, value in dimensions.items():
+            if len(str(value)) != cls.DIMENSION_CHAR_COUNT[dimension]:
+                return False
+        return True
 
-        query = f"SELECT * FROM simpletire_tire WHERE path ~ '{regex}'"
-        return cls.objects.raw(query)
-
-
-    # This method used in view to filter by tire dimension(s)
     @classmethod
-    def filter_by_size_regex(cls, section_width=None,
-                                   aspect_ratio=None,
-                                   wheel_diameter=None):
-
-        regex = '(SECTION_WIDTH)-(ASPECT_RATIO)z?r(WHEEL_DIAMETER)'
-
-        if section_width:
-            section_width_replacer = str(section_width)
-        else:
-            section_width_replacer = r'\d{3}'
-
-        if aspect_ratio:
-            aspect_ratio_replacer = str(aspect_ratio)
-        else:
-            aspect_ratio_replacer = r'\d{2}'
-
-        if wheel_diameter:
-            wheel_diameter_replacer = str(wheel_diameter)
-        else:
-            wheel_diameter_replacer = r'\d{2}'
-
-        regex = regex.replace('SECTION_WIDTH', section_width_replacer). \
-                      replace('ASPECT_RATIO',       aspect_ratio_replacer). \
-                      replace('WHEEL_DIAMETER', wheel_diameter_replacer)
-        return regex
+    def filter_by_size(cls, **dimensions):
+        sql  = 'SELECT * FROM simpletire_tire '
+        sql += cls.sql_filter(**dimensions)
+        return cls.objects.raw(sql)
 
 
+    @classmethod
+    def sql_filter(cls, **dimensions):
 
+        # Make sure only expected dimensions are passed in
+        assert not set(dimensions.keys()) - cls.DIMENSIONS
 
+        statements = []
+        conjunction = 'WHERE'
+        for dimension, value in dimensions.items():
+            if not value:
+                continue
+            op = cls.OPERATORS[dimension]
+            if dimension == 'aspect_ratio':
+                value = f'({value}, {value + cls.ASPECT_RATIO_SPACING}, {value - cls.ASPECT_RATIO_SPACING})'
+            statements.append(f'{conjunction} {dimension} {op} {value}')
+            conjunction = 'AND'
 
-    #@classmethod
-    #def find_or_initialize_by_path(cls, path):
-    #    try:
-    #        tire = cls.objects.get(path=path)
-    #    except cls.DoesNotExist:
-    #        tire = Tire(path=path)
-    #    return tire
+        return cls.SPACE.join(statements)
 
 

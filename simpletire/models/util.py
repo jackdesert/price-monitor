@@ -7,7 +7,7 @@ from datetime import date as newdate
 class Util:
     # Constants used by all classes
     BASE_URL = 'https://simpletire.com'
-    TIRE_SIZE_REGEX= re.compile('(\d{3})-(\d{2})z?r(\d{2}).*-tires$')
+    TIRE_SIZE_REGEX = re.compile('(\d{3})-(\d{2})z?r(\d{2}).*-tires$')
     ###############################
 
 

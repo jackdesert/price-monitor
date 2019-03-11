@@ -99,7 +99,7 @@ class StatsPresenter:
     def _query_postgres(self):
         # Uses postgres-specific "DISTINCT ON"
         return f'''
-        SELECT t.id, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
+        SELECT t.id, section_width, aspect_ratio, wheel_diameter, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
           JOIN
             (
              SELECT
@@ -127,7 +127,7 @@ class StatsPresenter:
     def _query_generic(self):
         # Uses windowing instead of postgres-specific "DISTINCT ON"
         return f'''
-        SELECT t.id, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
+        SELECT t.id, section_width, aspect_ratio, wheel_diameter, name, path, num_readings, min_pennies, max_pennies, mean_pennies, std_pennies, current_pennies FROM simpletire_tire t
           JOIN
             (
              SELECT

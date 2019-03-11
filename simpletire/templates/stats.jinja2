@@ -19,7 +19,7 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
     <select id="section_width">
         <option value="">All</option>
         {% for width in [185, 195, 205, 215, 225, 235, 245, 255, 265, 275, 285, 295] %}
-        <option {{ selected.get(width) }} value="{{ width }}">{{ width }}</option>
+        <option {{ selected.get(width) }} value="{{ width }}">At least {{ width }}</option>
         {% endfor %}
     </select>
 </div>
@@ -29,7 +29,7 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
     <select id="aspect_ratio">
         <option value="">All</option>
         {% for aspect_ratio in [30, 35, 40, 45, 50, 55, 60, 65] %}
-            <option {{ selected.get(aspect_ratio) }} value="{{ aspect_ratio }}">{{ aspect_ratio }}</option>
+            <option {{ selected.get(aspect_ratio) }} value="{{ aspect_ratio }}"> {{ aspect_ratio }} +/- 5</option>
         {% endfor %}
     </select>
 </div>

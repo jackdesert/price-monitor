@@ -1,5 +1,6 @@
 from django.test import TestCase
 from simpletire.models import Tire
+import ipdb
 
 # Create your tests here.
 
@@ -21,24 +22,6 @@ class TireTestCase(TestCase):
         tire_3.save()
         tire_4.save()
 
-    # Yes, we are testing private methods
-
-    def test_filter_by_size_regex_1(self):
-        expected = '(\\d{3})-(\\d{2})z?r(\\d{2})'
-        self.assertEqual(expected , Tire.filter_by_size_regex())
-
-    def test_filter_by_size_regex_2(self):
-        expected = '(225)-(\\d{2})z?r(\\d{2})'
-        self.assertEqual(expected , Tire.filter_by_size_regex(section_width=225))
-
-    def test_filter_by_size_regex_3(self):
-        expected = '(\\d{3})-(45)z?r(\\d{2})'
-        self.assertEqual(expected , Tire.filter_by_size_regex(aspect_ratio=45))
-
-    def test_filter_by_size_regex_4(self):
-        expected = '(\\d{3})-(\\d{2})z?r(18)'
-        self.assertEqual(expected , Tire.filter_by_size_regex(wheel_diameter=18))
-
 
     def test_filter_by_size_1(self):
         self.create_four_tires()
@@ -48,18 +31,17 @@ class TireTestCase(TestCase):
     def test_filter_by_size_2(self):
         self.create_four_tires()
         tires = Tire.filter_by_size(section_width=225)
-        self.assertEqual(len(tires), 1)
+        self.assertEqual(len(tires), 3)
 
     def test_filter_by_size_2(self):
         self.create_four_tires()
         tires = Tire.filter_by_size(section_width=195)
-        self.assertEqual(len(tires), 0)
+        self.assertEqual(len(tires), 4)
 
     def test_filter_by_size_2(self):
         self.create_four_tires()
-        tires = Tire.filter_by_size(section_width=245)
-        self.assertEqual(len(tires), 2)
-
+        tires = Tire.filter_by_size(section_width=255)
+        self.assertEqual(len(tires), 0)
 
     def test_filter_by_size_3(self):
         self.create_four_tires()
@@ -69,11 +51,11 @@ class TireTestCase(TestCase):
     def test_filter_by_size_3(self):
         self.create_four_tires()
         tires = Tire.filter_by_size(aspect_ratio=45)
-        self.assertEqual(len(tires), 1)
+        self.assertEqual(len(tires), 4)
 
     def test_filter_by_size_4(self):
         self.create_four_tires()
-        tires = Tire.filter_by_size(aspect_ratio=50)
+        tires = Tire.filter_by_size(aspect_ratio=55)
         self.assertEqual(len(tires), 3)
 
     def test_filter_by_size_5(self):
@@ -92,18 +74,26 @@ class TireTestCase(TestCase):
         self.assertEqual(len(tires), 2)
 
 
-    def test_size_1(self):
-        tire = Tire(path='blahblah-225-50zr17blah')
+    def test_size(self):
+        tire = Tire(section_width=225, aspect_ration=50, wheel_diameter=17)
         self.assertEqual(tire.size, '225/50r17')
 
-    def test_size_2(self):
-        tire = Tire(path='blahblah-235-40r18blah')
-        self.assertEqual(tire.size, '235/40r18')
-
-
-    def test_set_dimensions_1(self):
+    def test_set_dimensions(self):
         tire = Tire(path='blahblah-235-40r18blah-tires')
         tire.set_dimensions()
         self.assertEqual(235, tire.section_width)
         self.assertEqual(40,  tire.aspect_ratio)
         self.assertEqual(18,  tire.wheel_diameter)
+
+    def test_sql_filter_1(self):
+        sql = Tire.sql_filter(aspect_ratio=30)
+        self.assertEqual('WHERE aspect_ratio IN (30, 35, 25)', sql)
+
+    def test_sql_filter_1(self):
+        sql = Tire.sql_filter(section_width=225)
+        self.assertEqual('WHERE section_width >= 225', sql)
+
+    def test_sql_filter_1(self):
+        sql = Tire.sql_filter(wheel_diameter=16)
+        self.assertEqual('WHERE wheel_diameter = 16', sql)
+
