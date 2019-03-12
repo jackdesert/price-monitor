@@ -2,19 +2,17 @@
 {% block content %}
 
 <h1 id='page-title' class='page__title'>Mean Tire Prices</h1>
-<div class='page__subtitle'>
-This site shows you the mean (average) price of a tire over time.
-</div>
 
-<div>
+<div class='introduction'>
 As a drift enthusiast, you probably want to choose a tire that is consistently inexpensive.
+This site shows you the mean (average) price of a tire over time.
 </div>
 
 
 
 
 <div class='filters'>
-    <h2>What is your Wheel Diameter?</h2>
+    <h3>What is your Wheel Diameter?</h3>
     <div class='filter'>
         <label for="wheel_diameter">Wheel Diameter</label>
         <select id="wheel_diameter">
@@ -52,7 +50,7 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
 
 {% if selected %}
 <div class='options'>
-    <h2>Options</h2>
+    <h3>Options</h3>
     <input disabled type="checkbox" id='specify-exact-size'>
         <label for='specify-exact-size'>Specify Exact Size</label><br>
     <input disabled type="checkbox" id='show-tire-height'>
@@ -71,6 +69,8 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
 
 {% if selected %}
 <h2 class='hide-on-filter-change'>Cheapest {{ label }}</h2>
+{% else %}
+<img src='static/images/car-trimmed.jpg' class='img'></img>
 {% endif %}
 
 {% if tires %}
@@ -103,9 +103,14 @@ As a drift enthusiast, you probably want to choose a tire that is consistently i
         {% endfor %}
     </table>
     {{ truncated }}
-{% else %}
-    <div class='error'>{{ hint }}</div>
+    <img src='static/images/car4-trimmed-narrow.jpg' class='img'></img>
 {% endif %}
+
+{% if selected and not tires %}
+    <div class='error'>{{ hint }}</div>
+    <img src='static/images/car3-trimmed.jpg' class='img'></img>
+{% endif %}
+
 
 
 {% endblock %}

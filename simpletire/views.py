@@ -46,7 +46,7 @@ def stats_view(request):
     hint = ''
     tires = []
     if selected:
-        hint = 'No tires found matching your search criterion'
+        hint = 'No tires found matching your search criteria'
         tires = StatsPresenter(sql_filter).tire_stats_sorted('', False)
     truncated = ''
     if len(tires) > max_tires:

@@ -25,6 +25,7 @@ time, mark, audio, video {
     font-size:4mm;
     vertical-align:baseline;
     background:transparent;
+    font-family: sans-serif;
 }
 
 body {
@@ -108,13 +109,25 @@ input, select {
 h1
 {
   font-size: 2rem;
-  margin-bottom: 0.2rem;
 }
 
 h2
 {
-  margin-top: 0.5rem;
   font-size: 1.5rem;
+
+}
+
+h1, h2
+{
+  background: black;
+  color: white;
+  padding: 0.3rem 0.2rem;
+  margin: 0 -0.2rem;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+  font-family: serif;
 }
 
 select, option
@@ -122,11 +135,27 @@ select, option
   font-size: 1.5rem;
 }
 
+body
+{
+  padding: 0.2rem;
+}
+
+a
+{
+  color: #d20;
+}
+
+.stripe
+{
+  background-color: #f0eeee;
+}
 
 
 .error
 {
   color: red;
+  font-size: 1.5rem;
+  margin-top: 0.5rem;
 }
 
 .hidden
@@ -139,9 +168,11 @@ th,td
   padding: 0.1rem 0.5rem;
 }
 
+
 tr,th,td
 {
   text-align: left;
+  vertical-align: middle;
 }
 
 /* See http://youmightnotneedjquery.com/ */
@@ -157,16 +188,17 @@ tr,th,td
   transition: opacity 1600ms;
 }
 
+.filters, .options
+{
+  margin-bottom: 1rem;
+  float: left;
+}
+
 .filters
 {
-  float: left;
   padding-right: 2rem;
 }
 
-.options
-{
-  float: left;
-}
 
 .clear
 {
@@ -178,13 +210,21 @@ tr,th,td
   display: none;
 }
 
+.introduction
+{
+  padding: 0.5rem 0 1rem;
+}
+
 .footer
 {
   padding-top: 2rem;
+  color: #aaa;
 }
 
-.stripe
+.img
 {
-  background-color: #ddd;
+  width: 100%;
+  margin-top: 3rem;
 }
+
 

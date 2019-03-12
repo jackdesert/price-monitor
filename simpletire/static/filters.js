@@ -89,7 +89,7 @@ var bindStddevOptions = function(){
     box.addEventListener('change', function(e){
         var elements = document.querySelectorAll('.stddev')
 
-        if (e.srcElement.checked){
+        if (e.target.checked){
             elements.forEach(function(el){
                 displayBlock(el)
             })

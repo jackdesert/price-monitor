@@ -94,9 +94,8 @@ Backlog
 -------
 
 - When one filter is clicked, disable all filters to wait for the page refresh
-- On phone, hide some of the data so it all fits on screen
-  (Need name, size, mean)
 - Once a filter is selected, "Specify at least one filter" needs a different message
+- Hide options if not tires match selection
 
 
 
