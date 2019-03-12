@@ -24,7 +24,7 @@ This site shows you the mean (average) price of a tire over time.
     </div>
 
     {% if selected %}
-    <div id='additional-filters' class='transparent'>
+    <div id='additional-filters' class='transparent hide-on-filter-change'>
         <div class='filter'>
             <label for="section_width">Width</label>
             <select id="section_width">
@@ -44,12 +44,14 @@ This site shows you the mean (average) price of a tire over time.
             </select>
         </div>
         <a href='/'>Start Over</a>
-        {% endif %}
     </div>
+    {% else %}
+    <img src='static/images/car0-main-trimmed.jpg' class='img'></img>
+    {% endif %}
 </div>
 
 {% if selected %}
-<div class='options'>
+<div class='options hide-on-filter-change'>
     <h3>Options</h3>
     <input disabled type="checkbox" id='specify-exact-size'>
         <label for='specify-exact-size'>Specify Exact Size</label><br>
@@ -69,8 +71,6 @@ This site shows you the mean (average) price of a tire over time.
 
 {% if selected %}
 <h2 class='hide-on-filter-change'>Cheapest {{ label }}</h2>
-{% else %}
-<img src='static/images/car-trimmed.jpg' class='img'></img>
 {% endif %}
 
 {% if tires %}
@@ -103,12 +103,12 @@ This site shows you the mean (average) price of a tire over time.
         {% endfor %}
     </table>
     {{ truncated }}
-    <img src='static/images/car4-trimmed-narrow.jpg' class='img'></img>
+    <img src='static/images/{{ random_photo }}' class='img'></img>
 {% endif %}
 
 {% if selected and not tires %}
     <div class='error'>{{ hint }}</div>
-    <img src='static/images/car3-trimmed.jpg' class='img'></img>
+    <img src='static/images/car3-search-failed-trimmed.jpg' class='img'></img>
 {% endif %}
 
 

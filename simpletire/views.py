@@ -3,6 +3,7 @@
 
 from django.shortcuts import render
 from django.shortcuts import redirect
+from random import randint
 from simpletire.models import Catalog
 from simpletire.models import StatsPresenter
 from simpletire.models import Tire
@@ -53,6 +54,11 @@ def stats_view(request):
         tires = tires[0:max_tires]
         truncated = f'(Showing first {max_tires} results)'
 
+
+    random_photos = ['car2-trimmed.jpg', 'car4-trimmed.jpg', 'car5-trimmed.jpg', 'car6-trimmed.jpg']
+    photo_index = randint(0, len(random_photos) - 1)
+    context['random_photo'] = random_photos[photo_index]
+    context['random_photo'] = 'car5-trimmed.jpg~'
 
     context['tires'] = tires
     context['hint'] = hint
