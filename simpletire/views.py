@@ -58,7 +58,6 @@ def stats_view(request):
     random_photos = ['car2-trimmed.jpg', 'car4-trimmed.jpg', 'car5-trimmed.jpg', 'car6-trimmed.jpg']
     photo_index = randint(0, len(random_photos) - 1)
     context['random_photo'] = random_photos[photo_index]
-    context['random_photo'] = 'car5-trimmed.jpg~'
 
     context['tires'] = tires
     context['hint'] = hint
