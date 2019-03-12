@@ -1,0 +1,27 @@
+<div class='filters'>
+    <h3>Filters</h3>
+    {% include '_wheel_diameter_select.jinja2' %}
+    <label for="wheel_diameter">Wheel Diameter</label>
+
+    <div id='additional-filters' class='transparent hide-on-filter-change'>
+        <div class='filter'>
+            <select id="section_width">
+                <option value=""></option>
+                {% for width in [185, 195, 205, 215, 225, 235, 245, 255, 265, 275, 285, 295] %}
+                <option {{ selected.get(width) or '' }} value="{{ width }}">At least {{ width }}</option>
+                {% endfor %}
+            </select>
+            <label for="section_width">Width</label>
+        </div>
+        <div class='filter'>
+            <select id="aspect_ratio">
+                <option value=""></option>
+                {% for aspect_ratio in [30, 35, 40, 45, 50, 55, 60, 65] %}
+                    <option {{ selected.get(aspect_ratio) or '' }} value="{{ aspect_ratio }}">{{ aspect_ratio }} ~</option>
+                {% endfor %}
+            </select>
+            <label for="aspect_ratio">Aspect Ratio</label>
+        </div>
+        <a href='/'>Start Over</a>
+    </div>
+</div>

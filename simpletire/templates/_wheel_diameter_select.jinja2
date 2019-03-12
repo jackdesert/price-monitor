@@ -1,0 +1,11 @@
+<select id="wheel_diameter">
+    {% if selected %}
+        <option value=""></option>
+    {% else %}
+        <option value="">Choose</option>
+    {% endif %}
+
+    {% for diameter in [14, 15, 16, 17, 18, 19, 20] %}
+        <option {{ selected.get(diameter) or '' }} value="{{ diameter }}">{{ diameter }}</option>
+    {% endfor %}
+</select>

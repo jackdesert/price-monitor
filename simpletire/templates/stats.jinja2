@@ -9,59 +9,23 @@ This site shows you the mean (average) price of a tire over time.
 </div>
 
 
-
-
-<div class='filters'>
-    <h3>What is your Wheel Diameter?</h3>
-    <div class='filter'>
-        <label for="wheel_diameter">Wheel Diameter</label>
-        <select id="wheel_diameter">
-            <option value="">All</option>
-            {% for diameter in [14, 15, 16, 17, 18, 19, 20] %}
-                <option {{ selected.get(diameter) or '' }} value="{{ diameter }}">{{ diameter }}</option>
-            {% endfor %}
-        </select>
+{% if not selected %}
+    <div class='call-to-action'>Wheel Diameter:
+        {% include '_wheel_diameter_select.jinja2' %}
     </div>
 
-    {% if selected %}
-    <div id='additional-filters' class='transparent hide-on-filter-change'>
-        <div class='filter'>
-            <label for="section_width">Width</label>
-            <select id="section_width">
-                <option value="">All</option>
-                {% for width in [185, 195, 205, 215, 225, 235, 245, 255, 265, 275, 285, 295] %}
-                <option {{ selected.get(width) or '' }} value="{{ width }}">At least {{ width }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class='filter'>
-            <label for="aspect_ratio">Aspect Ratio</label>
-            <select id="aspect_ratio">
-                <option value="">All</option>
-                {% for aspect_ratio in [30, 35, 40, 45, 50, 55, 60, 65] %}
-                    <option {{ selected.get(aspect_ratio) or '' }} value="{{ aspect_ratio }}"> ~ {{ aspect_ratio }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <a href='/'>Start Over</a>
-    </div>
-    {% else %}
+    <div class='space-3rem'></div>
+    <div class='space-3rem'></div>
+    <h3>Beginning</h3>
     <img src='static/images/car0-main-trimmed.jpg' class='img'></img>
-    {% endif %}
-</div>
+{% endif %}
+
 
 {% if selected %}
-<div class='options hide-on-filter-change'>
-    <h3>Options</h3>
-    <input disabled type="checkbox" id='specify-exact-size'>
-        <label for='specify-exact-size'>Specify Exact Size</label><br>
-    <input disabled type="checkbox" id='show-tire-height'>
-        <label for='show-tire-height'>Show tire height</label><br>
-    <input disabled type="checkbox" id='show-treadwear'>
-        <label for='show-treadwear'>Show treadwear rating</label><br>
-    <input type="checkbox" id='show-stddev'>
-        <label for='show-stddev'>Show Max, Min, Stddev</label><br>
-</div>
+    <div class='options hide-on-filter-change'>
+        {% include '_filters.jinja2' %}
+        {% include '_options.jinja2' %}
+    </div>
 {% endif %}
 
 <div class='clear'></div>
@@ -74,40 +38,17 @@ This site shows you the mean (average) price of a tire over time.
 {% endif %}
 
 {% if tires %}
-    <table id='tires' class='hide-on-filter-change'>
-        <tr>
-            <th>Size</th>
-            <th>Name</th>
-            <th>Mean<br>Price</th>
-            <th>Current<br>Price</th>
-            <th class='stddev'>Min<br>Price</th>
-            <th class='stddev'>Max<br>Price</th>
-            <th class='stddev'>Num<br>Readings</th>
-            <th class='stddev'>Standard<br>Deviation</th>
-        </tr>
-        {% for tire in tires %}
-            <tr class="{{ loop.cycle('stripe', '') }}">
-                <td>{{ tire.size }}</td>
-                <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name | truncate(29)}}</a></td>
-                <td>{{ tire.mean    | round(2) }}</td>
-                <td>{{ tire.current | round | int}}</td>
-                <td class='stddev'>{{ tire.min     | round | int }}</td>
-                <td class='stddev'>{{ tire.max     | round | int}}</td>
-                <td class='stddev'>{{ tire.num_readings }}</td>
-                <td class='stddev'>
-                    {% if tire.std is defined %}
-                        {{ tire.std     | round(2) }}
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+    {% include '_tires.jinja2' %}
     {{ truncated }}
+    <div class='space-3rem'></div>
+    <h3>Bliss</h3>
     <img src='static/images/{{ random_photo }}' class='img'></img>
 {% endif %}
 
 {% if selected and not tires %}
     <div class='error'>{{ hint }}</div>
+    <div class='space-3rem'></div>
+    <h3>Uh-Oh</h3>
     <img src='static/images/car3-search-failed-trimmed.jpg' class='img'></img>
 {% endif %}
 

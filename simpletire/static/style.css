@@ -108,7 +108,7 @@ input, select {
 
 h1
 {
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 
 h2
@@ -117,7 +117,7 @@ h2
 
 }
 
-h1, h2
+h1, h2, h3
 {
   background: black;
   color: white;
@@ -130,10 +130,33 @@ h1, h2, h3, h4, h5, h6
   font-family: serif;
 }
 
+.call-to-action
+{
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.filters select
+{
+  width: 10rem;
+}
+
 select, option
 {
   font-size: 1.5rem;
 }
+
+
+/* Right align selects. See https://stackoverflow.com/questions/7920677/text-align-right-on-select-or-option#answer-43919388 */
+.filters select { text-align-last: right; }
+.filters option { direction: rtl; }
+
+/*
+option { direction: ltr; }
+select { direction: rtl; }
+*/
+
+
 
 body
 {
@@ -194,6 +217,7 @@ tr,th,td
   float: left;
 }
 
+
 .filters
 {
   padding-right: 2rem;
@@ -224,7 +248,29 @@ tr,th,td
 .img
 {
   width: 100%;
-  margin-top: 3rem;
+  text-align: left;
 }
 
 
+.space-1rem
+{
+  width: 1px;
+  height: 1rem;
+}
+
+.space-2rem
+{
+  width: 1px;
+  height: 2rem;
+}
+
+.space-3rem
+{
+  width: 1px;
+  height: 3rem;
+}
+.space-4rem
+{
+  width: 1px;
+  height: 4rem;
+}

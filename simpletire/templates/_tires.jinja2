@@ -1,0 +1,28 @@
+<table id='tires' class='hide-on-filter-change'>
+    <tr>
+        <th>Size</th>
+        <th>Name</th>
+        <th>Mean<br>Price</th>
+        <th>Current<br>Price</th>
+        <th class='stddev'>Min<br>Price</th>
+        <th class='stddev'>Max<br>Price</th>
+        <th class='stddev'>Num<br>Readings</th>
+        <th class='stddev'>Standard<br>Deviation</th>
+    </tr>
+    {% for tire in tires %}
+        <tr class="{{ loop.cycle('stripe', '') }}">
+            <td>{{ tire.size }}</td>
+            <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name | truncate(29)}}</a></td>
+            <td>{{ tire.mean    | round(2) }}</td>
+            <td>{{ tire.current | round | int}}</td>
+            <td class='stddev'>{{ tire.min     | round | int }}</td>
+            <td class='stddev'>{{ tire.max     | round | int}}</td>
+            <td class='stddev'>{{ tire.num_readings }}</td>
+            <td class='stddev'>
+                {% if tire.std is defined %}
+                    {{ tire.std     | round(2) }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
