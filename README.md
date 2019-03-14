@@ -94,7 +94,6 @@ Backlog
 -------
 
 - BUG: Label (Cheapest None) on http://localhost:8000/?wheel_diameter=16&show_all=true
-- BUG: Make sure the first ten tires (of 200) are the same first ten (of 1500)
 - Find out why there is a keyerror on some tires
 - Hide options if not tires match selection
 - tire., tyre., tires., tyres. => redirect to canonical site

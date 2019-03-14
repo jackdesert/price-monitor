@@ -87,6 +87,8 @@ def label_from_dimensions(dimensions):
     if dimensions.get('aspect_ratio'):
         output += f" {conjunction} aspect ratio near {dimensions['aspect_ratio']}"
 
+    return output
+
 
 # The hard way that doesn't work because super() fails if no arguments
 #
