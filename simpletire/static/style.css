@@ -25,7 +25,7 @@ time, mark, audio, video {
     font-size:4mm;
     vertical-align:baseline;
     background:transparent;
-    font-family: sans-serif;
+    font-family: arial;
 }
 
 body {
@@ -138,12 +138,17 @@ h1, h2, h3, h4, h5, h6
 
 .filters select
 {
-  width: 10rem;
+  width: 8.5em; /* Note em, not rem, so that width scales with text */
 }
 
 select, option
 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+}
+
+input[type="checkbox"]
+{
+  background: black;
 }
 
 
