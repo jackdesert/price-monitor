@@ -15,6 +15,7 @@ class Tire(models.Model):
     section_width  = models.SmallIntegerField()
     wheel_diameter = models.SmallIntegerField()
     aspect_ratio   = models.SmallIntegerField()
+    utqg           = models.SmallIntegerField(null=True)
 
     SPACE = ' '
     DIMENSIONS = {'section_width', 'aspect_ratio', 'wheel_diameter'}
@@ -61,13 +62,14 @@ class Tire(models.Model):
 
         price_pennies = round(price_float * self.PENNIES_PER_DOLLAR)
         in_stock = checker.in_stock
-        if self.name != checker.name:
+        if (self.name != checker.name) or (self.utqg != checker.utqg):
             if self._persisted:
-                print(f'Renaming "{self.name}" to "{checker.name}"')
+                print(f'Renaming "{self.name}" with utqg {self.utqg} to "{checker.name}" with utqg {checker.utqg}')
             else:
                 print(f'New tire: "{checker.name}"')
 
             self.name = checker.name
+            self.utqg = checker.utqg
             self.set_dimensions()
             self.save()
 

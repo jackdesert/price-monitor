@@ -82,12 +82,35 @@ var displayNone = function(el){
 
 
 
+// TODO DRY up bindStddevOptions and bindUtqgOptions
+// as they are almost identical
 var bindStddevOptions = function(){
     'use strict'
     var box = document.getElementById('show-stddev')
 
     box.addEventListener('change', function(e){
         var elements = document.querySelectorAll('.stddev')
+
+        if (e.target.checked){
+            elements.forEach(function(el){
+                displayBlock(el)
+            })
+        }else{
+            elements.forEach(function(el){
+                displayNone(el)
+            })
+        }
+    })
+
+
+}
+
+var bindUtqgOptions = function(){
+    'use strict'
+    var box = document.getElementById('show-utqg')
+
+    box.addEventListener('change', function(e){
+        var elements = document.querySelectorAll('.utqg')
 
         if (e.target.checked){
             elements.forEach(function(el){
@@ -116,5 +139,6 @@ var bindTitle = function(){
 
 bindFilters()
 bindStddevOptions()
+bindUtqgOptions()
 bindTitle()
 setTimeout(showAdditionalFilters, 4000)

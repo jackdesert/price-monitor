@@ -34,7 +34,8 @@ class StatsPresenter:
                              max=tire.max_pennies / self.PENNIES_PER_DOLLAR,
                              mean=tire.mean_pennies / self.PENNIES_PER_DOLLAR,
                              std=(tire.std_pennies or 0) / self.PENNIES_PER_DOLLAR,
-                             current=tire.current_pennies / self.PENNIES_PER_DOLLAR)
+                             current=tire.current_pennies / self.PENNIES_PER_DOLLAR,
+                             utqg=tire.utqg)
 
             if math.isnan(tire_dict['std']):
                 del tire_dict['std']

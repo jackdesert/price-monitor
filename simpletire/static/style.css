@@ -146,11 +146,6 @@ select, option
   font-size: 1.3rem;
 }
 
-input[type="checkbox"]
-{
-  background: black;
-}
-
 
 /* Right align selects. See https://stackoverflow.com/questions/7920677/text-align-right-on-select-or-option#answer-43919388 */
 .filters select { text-align-last: right; }
@@ -234,7 +229,7 @@ tr,th,td
   clear: both;
 }
 
-.stddev
+.stddev, .utqg
 {
   display: none;
 }

@@ -8,6 +8,7 @@
         <th class='stddev'>Max<br>Price</th>
         <th class='stddev'>Num<br>Readings</th>
         <th class='stddev'>Standard<br>Deviation</th>
+        <th class='utqg'>Treadwear</th>
     </tr>
     {% for tire in tires %}
         <tr class="{{ loop.cycle('stripe', '') }}">
@@ -23,6 +24,7 @@
                     {{ tire.std     | round(2) }}
                 {% endif %}
             </td>
+            <td class='utqg'>{{ tire.utqg or '' }}</td>
         </tr>
     {% endfor %}
 </table>

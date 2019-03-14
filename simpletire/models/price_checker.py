@@ -1,11 +1,14 @@
 from bs4 import BeautifulSoup
 import ipdb
+import re
 from .fetcher import Fetcher
 
 class PriceChecker:
 
     class UndefinedProperty(Exception):
         '''Price, InStock, and Name are undefined because you were unable to fetch'''
+
+    UTQG_REGEX = re.compile(r'UTQG: (\d+)')
 
     def __init__(self, url):
         self.url = url
@@ -42,6 +45,16 @@ class PriceChecker:
         if not element:
             return
         return element.text
+
+    @property
+    def utqg(self):
+        self._require_success('utqg')
+
+        for li in self.doc.find('ul', 'speclist').findAll('li'):
+            match = re.search(self.UTQG_REGEX, li.text)
+            if match:
+                return int(match[1])
+
 
     def _require_success(self, property_name):
         if not self.success:
