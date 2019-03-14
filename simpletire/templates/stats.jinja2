@@ -34,12 +34,18 @@ This site shows you the mean (average) price of a tire over time.
 <script src="static/filters.js"></script>
 
 {% if selected %}
-<h2 class='hide-on-filter-change'>Cheapest {{ label }}</h2>
+    <h2 class='hide-on-filter-change'>Cheapest {{ label }}</h2>
 {% endif %}
 
 {% if tires %}
     {% include '_tires.jinja2' %}
-    {{ truncated }}
+    <div class='show-all'>
+        {% if show_all_path %}
+            Showing first {{ max_tires }} records. <a href='{{show_all_path | safe}}'>Show all {{ available_records }} records</a>
+        {% else %}
+            Showing all {{ available_records }} records.
+        {% endif %}
+    </div>
     <div class='space-3rem'></div>
     <h3>Bliss</h3>
     <img src='static/images/{{ random_photo }}' class='img'></img>

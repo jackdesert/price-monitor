@@ -46,24 +46,28 @@ def stats_view(request):
     context['base_url'] = Util.BASE_URL
     hint = ''
     tires = []
+    available_records = 0
     if selected:
         hint = 'No tires found matching your search criteria'
         tires = StatsPresenter(sql_filter).tire_stats_sorted('', False)
-    truncated = ''
-    if len(tires) > max_tires:
+        available_records = len(tires)
+    show_all_path = ''
+    if (len(tires) > max_tires) and not request.GET.get('show_all'):
         tires = tires[0:max_tires]
-        truncated = f'(Showing first {max_tires} results)'
+        show_all_path = f'{request.get_full_path_info()}&show_all=true'
 
 
     random_photos = ['car2-trimmed.jpg', 'car4-trimmed.jpg', 'car5-trimmed.jpg', 'car6-trimmed.jpg']
     photo_index = randint(0, len(random_photos) - 1)
     context['random_photo'] = random_photos[photo_index]
 
+    context['available_records'] = available_records
+    context['show_all_path'] = show_all_path
     context['tires'] = tires
+    context['max_tires'] = max_tires
     context['hint'] = hint
     context['label'] = label
     context['selected'] = selected
-    context['truncated'] = truncated
 
 
 
