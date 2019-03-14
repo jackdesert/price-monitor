@@ -9,9 +9,9 @@ from django.db import connection
 class StatsPresenter:
 
     PENNIES_PER_DOLLAR = 100
-    DEFAULT_SORT_KEY = 'mean'
     STATUS_SUCCEEDED = 'SUCCEEDED'
     POLL_PERIOD_SECONDS = 0.5
+
 
     def __init__(self, sql_filter='', limit=0):
         self.sql_filter = sql_filter
@@ -46,20 +46,6 @@ class StatsPresenter:
 
             output.append(tire_dict)
         return output
-
-    def tire_stats_sorted(self, sort_key, reverse):
-        stats = self.tire_stats()
-
-        if not stats:
-            # If no tires match your query
-            return stats
-
-        if sort_key not in stats[0].keys():
-            sort_key = self.DEFAULT_SORT_KEY
-
-        key = lambda x: x[sort_key]
-        stats.sort(key=key, reverse=reverse)
-        return stats
 
     def matching_records_count(self):
         with connection.cursor() as cursor:
@@ -133,6 +119,7 @@ class StatsPresenter:
              ) AS currents
              ON stats.tire_id = currents.tire_id
         {self.sql_filter}
+        ORDER BY mean_pennies, t.id
         {self.sql_limit};'''
 
     def _query_generic(self):
@@ -169,6 +156,7 @@ class StatsPresenter:
             ) AS currents
            ON stats.tire_id = currents.tire_id
         {self.sql_filter}
+        ORDER BY mean_pennies, t.id
         {self.sql_limit};'''
 
     def _query_prestodb(self):

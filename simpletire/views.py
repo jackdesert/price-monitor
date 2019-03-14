@@ -43,7 +43,7 @@ def stats_view(request):
     tires = []
     if selected:
         no_matching_tires_hint = 'No tires found matching your search criteria'
-        tires = stats_presenter.tire_stats_sorted('', False)
+        tires = stats_presenter.tire_stats()
 
     show_all_path = ''
     if (len(tires) == MAX_TIRES) and not show_all:

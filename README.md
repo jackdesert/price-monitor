@@ -93,10 +93,9 @@ Estimated time to completion: 8 hours
 Backlog
 -------
 
+- BUG: Label (Cheapest None) on http://localhost:8000/?wheel_diameter=16&show_all=true
+- BUG: Make sure the first ten tires (of 200) are the same first ten (of 1500)
 - Find out why there is a keyerror on some tires
-- Add "no-follow" to external links
-- When one filter is clicked, disable all filters to wait for the page refresh
-- Once a filter is selected, "Specify at least one filter" needs a different message
 - Hide options if not tires match selection
 - tire., tyre., tires., tyres. => redirect to canonical site
 - change zero price to N/A (default value)
