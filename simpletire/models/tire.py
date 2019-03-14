@@ -62,11 +62,17 @@ class Tire(models.Model):
 
         price_pennies = round(price_float * self.PENNIES_PER_DOLLAR)
         in_stock = checker.in_stock
+
+        if not self._persisted and not in_stock:
+            return f'Not creating tire {url} because not in stock'
+
         if (self.name != checker.name) or (self.utqg != checker.utqg):
             if self._persisted:
                 print(f'Renaming "{self.name}" with utqg {self.utqg} to "{checker.name}" with utqg {checker.utqg}')
             else:
-                print(f'New tire: "{checker.name}"')
+                print(f'Creating tire: "{checker.name}"')
+
+
 
             self.name = checker.name
             self.utqg = checker.utqg

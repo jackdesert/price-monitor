@@ -93,6 +93,7 @@ Estimated time to completion: 8 hours
 Backlog
 -------
 
+- Find out why there is a keyerror on some tires
 - Add "no-follow" to external links
 - When one filter is clicked, disable all filters to wait for the page refresh
 - Once a filter is selected, "Specify at least one filter" needs a different message

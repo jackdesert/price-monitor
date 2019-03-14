@@ -4,6 +4,7 @@ import ipdb
 import math
 import pandas
 from .tire import Tire
+from django.db import connection
 
 class StatsPresenter:
 
@@ -12,8 +13,11 @@ class StatsPresenter:
     STATUS_SUCCEEDED = 'SUCCEEDED'
     POLL_PERIOD_SECONDS = 0.5
 
-    def __init__(self, sql_filter=''):
+    def __init__(self, sql_filter='', limit=0):
         self.sql_filter = sql_filter
+        self.sql_limit = ''
+        if limit:
+            self.sql_limit = f'LIMIT {limit}'
 
     def tire_stats(self):
         # This "can" push data to aws athena and pull from it,
@@ -56,6 +60,11 @@ class StatsPresenter:
         key = lambda x: x[sort_key]
         stats.sort(key=key, reverse=reverse)
         return stats
+
+    def matching_records_count(self):
+        with connection.cursor() as cursor:
+            cursor.execute(f'SELECT count(*) FROM simpletire_tire {self.sql_filter}')
+            return cursor.fetchone()[0]
 
     def _tires_from_postgres(self):
         tires = Tire.objects.raw(self._query_postgres())
@@ -123,7 +132,8 @@ class StatsPresenter:
               ORDER BY tire_id, date DESC
              ) AS currents
              ON stats.tire_id = currents.tire_id
-        {self.sql_filter};'''
+        {self.sql_filter}
+        {self.sql_limit};'''
 
     def _query_generic(self):
         # Uses windowing instead of postgres-specific "DISTINCT ON"
@@ -158,7 +168,8 @@ class StatsPresenter:
                ) AS currents_temp WHERE date = max_date
             ) AS currents
            ON stats.tire_id = currents.tire_id
-        {self.sql_filter};'''
+        {self.sql_filter}
+        {self.sql_limit};'''
 
     def _query_prestodb(self):
         # PrestoDB uses true and false as booleans instead of 't' and 'f'

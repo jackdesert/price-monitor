@@ -41,9 +41,9 @@ This site shows you the mean (average) price of a tire over time.
     {% include '_tires.jinja2' %}
     <div class='show-all'>
         {% if show_all_path %}
-            Showing first {{ max_tires }} records. <a href='{{show_all_path | safe}}'>Show all {{ available_records }} records</a>
+            Showing first {{ max_tires }} records. <a href='{{show_all_path | safe}}'>Show all {{ matching_records_count }} records</a>
         {% else %}
-            Showing all {{ available_records }} records.
+            Showing all {{ tires | length }} records.
         {% endif %}
     </div>
     <div class='space-3rem'></div>
@@ -52,7 +52,7 @@ This site shows you the mean (average) price of a tire over time.
 {% endif %}
 
 {% if selected and not tires %}
-    <div class='error'>{{ hint }}</div>
+    <div class='error'>{{ no_matching_tires_hint }}</div>
     <div class='space-3rem'></div>
     <h3>Uh-Oh</h3>
     <img src='static/images/car3-search-failed-trimmed.jpg' class='img'></img>

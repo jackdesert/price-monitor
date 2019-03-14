@@ -13,7 +13,7 @@
     {% for tire in tires %}
         <tr class="{{ loop.cycle('stripe', '') }}">
             <td>{{ tire.size }}</td>
-            <td><a href='{{ base_url }}/{{ tire.path }}'>{{ tire.name | truncate(29)}}</a></td>
+            <td><a href='{{ base_url }}/{{ tire.path }}' rel='nofollow'>{{ tire.name | truncate(29)}}</a></td>
             <td>{{ tire.mean    | round(2) }}</td>
             <td>{{ tire.current | round | int}}</td>
             <td class='stddev'>{{ tire.min     | round | int }}</td>
