@@ -22,6 +22,7 @@ class Tire(models.Model):
     OPERATORS = dict(section_width='>=', aspect_ratio='IN', wheel_diameter='=')
     ASPECT_RATIO_SPACING = 5
     DIMENSION_CHAR_COUNT = dict(section_width=3, aspect_ratio=2, wheel_diameter=2)
+    MM_PER_INCH = 25.4
 
     class Meta():
         # This index acts as a unique constraint (probably not required for speed)
@@ -97,6 +98,13 @@ class Tire(models.Model):
     @property
     def size(self):
         return f'{self.section_width}/{self.aspect_ratio}r{self.wheel_diameter}'
+
+    @property
+    def diameter(self):
+        aspect_ratio_decimal = self.aspect_ratio / 100
+        section_width_inches = self.section_width / self.MM_PER_INCH
+        sidewall_height_inches = section_width_inches * aspect_ratio_decimal
+        return self.wheel_diameter + 2 * sidewall_height_inches
 
     @property
     def _persisted(self):

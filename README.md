@@ -90,11 +90,37 @@ all four CPUs, and averages about 30%.
 Processes about 3/second
 Estimated time to completion: 8 hours
 
+Known Bugs
+----------
+
+In (heavily restricted) firefox, applying two filters, then pressing the browser back button leaves you with no tires displayed. (Works fine in chromium.)
+In duckduckgo on android, click tire link, then click "back", and treadwear column disapppears. (Not tested on other browsers)
+Kenda Kaiser is listed twice. Federal SS595 is listed twice.
+
+
+Feature Requests
+----------------
+
+- Cron incantation
+- Filter for treadwear (400 or less, 300 or less, 240 or less, 200 or less)
+- Click column heading to sort by current ptice (highlight sorted column)
+- Contact authors tires@jackdesert.com
+
+
 Backlog
 -------
 
-- BUG: Label (Cheapest None) on http://localhost:8000/?wheel_diameter=16&show_all=true
-- Find out why there is a keyerror on some tires
+- What is most important for debut launch?
+  - cron incantation
+  - slack exception reporting ?
+  - test suite that exercises controller and verifies all logic paths?
+  - fantastic artwork?
+  - Divine writeup?
+  - Submit to search engines?
+  - Feedback from more people?
+  - Talking to people about it after launch?
+
+- Find out why there is a keyerror when fetching some tires
 - Hide options if not tires match selection
 - tire., tyre., tires., tyres. => redirect to canonical site
 - change zero price to N/A (default value)
@@ -110,3 +136,9 @@ Backlog
   The benefit is that you could sort by price and only show the cheap ones.
   But then what if a cheap tire goes expensive for a time...now your stats are impure..
 
+
+Icebox
+------
+
+Guide to actual tire height: https://wayalife.com/showthread.php/35075-The-Ultimate-TRUE-TIRE-SIZE-Database
+Nominal size: http://en.wikibedia.ru/wiki/Nominal_size

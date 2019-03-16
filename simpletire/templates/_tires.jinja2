@@ -6,8 +6,9 @@
         <th>Current<br>Price</th>
         <th class='stddev'>Min<br>Price</th>
         <th class='stddev'>Max<br>Price</th>
-        <th class='stddev'>Num<br>Readings</th>
         <th class='stddev'>Standard<br>Deviation</th>
+        <th class='stddev'>Num<br>Readings</th>
+        <th class='diameter'>Overall<br>Diameter*</th>
         <th class='utqg'>Treadwear</th>
     </tr>
     {% for tire in tires %}
@@ -15,15 +16,16 @@
             <td>{{ tire.size }}</td>
             <td><a href='{{ base_url }}/{{ tire.path }}' rel='nofollow'>{{ tire.name | truncate(29)}}</a></td>
             <td>{{ tire.mean    | round(2) }}</td>
-            <td>{{ tire.current | round | int}}</td>
+            <td>{{ tire.current | round | int if tire.current else '—'}}</td>
             <td class='stddev'>{{ tire.min     | round | int }}</td>
             <td class='stddev'>{{ tire.max     | round | int}}</td>
-            <td class='stddev'>{{ tire.num_readings }}</td>
             <td class='stddev'>
                 {% if tire.std is defined %}
                     {{ tire.std     | round(2) }}
                 {% endif %}
             </td>
+            <td class='stddev'>{{ tire.num_readings }}</td>
+            <td class='diameter'>{{ tire.diameter | round(1) }} in</td>
             <td class='utqg'>{{ tire.utqg or '' }}</td>
         </tr>
     {% endfor %}

@@ -229,7 +229,7 @@ tr,th,td
   clear: both;
 }
 
-.stddev, .utqg
+.stddev, .utqg, .diameter
 {
   display: none;
 }

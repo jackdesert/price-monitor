@@ -97,3 +97,9 @@ class TireTestCase(TestCase):
         sql = Tire.sql_filter(wheel_diameter=16)
         self.assertEqual('WHERE wheel_diameter = 16', sql)
 
+    def test_diameter(self):
+        # Ten-inch section width
+        tire = Tire(path='blahblah-254-40r17blah-tires')
+        tire.set_dimensions()
+        self.assertEqual(25, tire.diameter)
+

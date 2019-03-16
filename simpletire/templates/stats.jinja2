@@ -46,6 +46,7 @@ This site shows you the mean (average) price of a tire over time.
             Showing all {{ tires | length }} records.
         {% endif %}
     </div>
+    {% include '_appendix.jinja2' %}
     <div class='space-3rem'></div>
     <h3>Bliss</h3>
     <img src='static/images/{{ random_photo }}' class='img'></img>
@@ -57,8 +58,6 @@ This site shows you the mean (average) price of a tire over time.
     <h3>Uh-Oh</h3>
     <img src='static/images/car3-search-failed-trimmed.jpg' class='img'></img>
 {% endif %}
-
-
 
 {% endblock %}
 

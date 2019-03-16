@@ -80,50 +80,22 @@ var displayNone = function(el){
     }
 }
 
-
-
-// TODO DRY up bindStddevOptions and bindUtqgOptions
-// as they are almost identical
-var bindStddevOptions = function(){
+var bindOptionsCheckbox = function(className){
     'use strict'
-    var box = document.getElementById('show-stddev')
+    var box = document.getElementById('show-' + className)
+    if (!box){ return }
 
     box.addEventListener('change', function(e){
-        var elements = document.querySelectorAll('.stddev')
+        var elements = document.querySelectorAll('.' + className)
 
-        if (e.target.checked){
-            elements.forEach(function(el){
+        elements.forEach(function(el){
+            if (e.target.checked){
                 displayBlock(el)
-            })
-        }else{
-            elements.forEach(function(el){
+            }else{
                 displayNone(el)
-            })
-        }
+            }
+        })
     })
-
-
-}
-
-var bindUtqgOptions = function(){
-    'use strict'
-    var box = document.getElementById('show-utqg')
-
-    box.addEventListener('change', function(e){
-        var elements = document.querySelectorAll('.utqg')
-
-        if (e.target.checked){
-            elements.forEach(function(el){
-                displayBlock(el)
-            })
-        }else{
-            elements.forEach(function(el){
-                displayNone(el)
-            })
-        }
-    })
-
-
 }
 
 
@@ -138,7 +110,8 @@ var bindTitle = function(){
 
 
 bindFilters()
-bindStddevOptions()
-bindUtqgOptions()
+bindOptionsCheckbox('stddev')
+bindOptionsCheckbox('utqg')
+bindOptionsCheckbox('diameter')
 bindTitle()
 setTimeout(showAdditionalFilters, 4000)
