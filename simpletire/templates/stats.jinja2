@@ -17,7 +17,7 @@ This site shows you the mean (average) price of a tire over time.
     <div class='space-3rem'></div>
     <div class='space-3rem'></div>
     <h3>Beginning</h3>
-    <img src='static/images/car0-main-trimmed.jpg' class='img'></img>
+    <div class='photo' name='car0-main-trimmed--@hensley.j.jpg'>photo</div>
 {% endif %}
 
 
@@ -49,14 +49,14 @@ This site shows you the mean (average) price of a tire over time.
     {% include '_appendix.jinja2' %}
     <div class='space-3rem'></div>
     <h3>Bliss</h3>
-    <img src='static/images/{{ random_photo }}' class='img'></img>
+    <div class='photo' name='{{ random_photo }}'>photo</div>
 {% endif %}
 
 {% if selected and not tires %}
     <div class='error'>{{ no_matching_tires_hint }}</div>
     <div class='space-3rem'></div>
     <h3>Uh-Oh</h3>
-    <img src='static/images/car3-search-failed-trimmed.jpg' class='img'></img>
+    <div class='photo' name='car3-search-failed-trimmed-photo-by-Andrea-Lynn--Jarrett-Matthews.jpg'>photo</div>
 {% endif %}
 
 {% endblock %}

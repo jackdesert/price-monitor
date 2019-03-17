@@ -280,3 +280,17 @@ tr,th,td
   padding-top: 1rem;
 }
 
+.photo
+{
+  position: relative;
+  width: 100%;
+}
+
+.photo__credit
+{
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: white;
+  font-size: 1.5rem;
+}

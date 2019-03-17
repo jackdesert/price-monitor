@@ -3,7 +3,8 @@
 
 from django.shortcuts import render
 from django.shortcuts import redirect
-from random import randint
+from random import SystemRandom
+from datetime import datetime
 from simpletire.models import Catalog
 from simpletire.models import StatsPresenter
 from simpletire.models import Tire
@@ -50,13 +51,19 @@ def stats_view(request):
         show_all_path = f'{request.get_full_path_info()}&show_all=true'
 
 
-    random_photos = ['car2-trimmed.jpg', 'car4-trimmed.jpg', 'car5-trimmed.jpg', 'car6-trimmed.jpg']
-    photo_index = randint(0, len(random_photos) - 1)
+    photos = ['car2-trimmed-photo-by-Andrea-Lynn--Jarrett-Matthews.jpg',
+              'car4-trimmed-narrow--Mario-Martinez.jpg',
+              'car5-trimmed--Chris-Burgunder.jpg',
+              'car6-trimmed--Chris-Burgunder.jpg']
+
+    shuffler = SystemRandom(datetime.now().microsecond)
+    shuffler.shuffle(photos)
+
 
 
     context = {}
     context['base_url'] = Util.BASE_URL
-    context['random_photo'] = random_photos[photo_index]
+    context['random_photo'] = photos[0]
     context['matching_records_count'] = matching_records_count
     context['show_all_path'] = show_all_path
     context['tires'] = tires
