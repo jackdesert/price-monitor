@@ -64,6 +64,9 @@ class Tire(models.Model):
         price_pennies = round(price_float * self.PENNIES_PER_DOLLAR)
         in_stock = checker.in_stock
 
+        if not checker.name:
+            return f'Not creating tire {url} because name is NULL'
+
         if not self._persisted and not in_stock:
             return f'Not creating tire {url} because not in stock'
 
