@@ -85,8 +85,16 @@ var bindOptionsCheckbox = function(className){
     var box = document.getElementById('show-' + className)
     if (!box){ return }
 
+    var triggerBox = function(){
+        // Manually trigger changeEvent
+        var changeEvent = document.createEvent('HTMLEvents')
+        changeEvent.initEvent('change', true, false)
+        box.dispatchEvent(changeEvent)
+    }
+
     box.addEventListener('change', function(e){
         var elements = document.querySelectorAll('.' + className)
+        console.log('responding to change', className)
 
         elements.forEach(function(el){
             if (e.target.checked){
@@ -96,6 +104,8 @@ var bindOptionsCheckbox = function(className){
             }
         })
     })
+
+    return triggerBox
 }
 
 
@@ -109,9 +119,33 @@ var bindTitle = function(){
 }
 
 
+function ready(fn) {
+    // This function is a non-jquery version of document.ready.
+    //
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading"){
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+}
+
+
+var triggerStddev = bindOptionsCheckbox('stddev')
+var triggerUtqg = bindOptionsCheckbox('utqg')
+var triggerDiameter = bindOptionsCheckbox('diameter')
+
+// Do these things when document is ready
+// so that when you click the back button after visiting simpletire link
+// then it will manually trigger the correct things
+ready(triggerStddev)
+ready(triggerUtqg)
+ready(triggerDiameter)
+
 bindFilters()
-bindOptionsCheckbox('stddev')
-bindOptionsCheckbox('utqg')
-bindOptionsCheckbox('diameter')
 bindTitle()
 setTimeout(showAdditionalFilters, 4000)
+
+
+
+
+

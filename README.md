@@ -74,6 +74,20 @@ Fetch
     env/bin/python manage.py fetch_current_prices
 
 
+Run manage.py in Development
+----------------------------
+
+    PAGER=less DJANGO_SETTINGS_MODULE=monitor.settings_development env/bin/python manage.py
+
+
+
+Run Server in Development
+-------------------------
+
+
+    PAGER=less DJANGO_SETTINGS_MODULE=monitor.settings_development env/bin/python manage.py runserver
+
+
 Performance
 -----------
 
