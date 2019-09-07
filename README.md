@@ -147,9 +147,16 @@ Feature Requests
 - Contact authors tires@jackdesert.com
 
 
+Site Down Placeholder
+---------------------
+
+Files are in doc/
+
 
 Backlog
 -------
+
+- Find a new host
 
 - What is most important for debut launch?
   - cron incantation
