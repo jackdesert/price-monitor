@@ -10,7 +10,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/price-monitor
 
-ExecStart=/home/ubuntu/price-monitor/env/bin/python manage.py runserver
+ExecStart=/home/ubuntu/price-monitor/env/bin/gunicorn monitor.wsgi
 
 TimeoutSec=30
 RestartSec=15s

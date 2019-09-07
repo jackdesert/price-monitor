@@ -30,14 +30,16 @@ of its pricing. Now I do.
 Prerequisites
 -------------
 
-    sudo apt install postgres nginx python3-venv redis
+    sudo apt install postgresql nginx python3-venv redis-server
 
 Install
 -------
 
     cd path/to/repo
     python3 -m venv env
-    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests redis
+    env/bin/pip install -r requirements.txt
+    # OR
+    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests redis gunicorn
 
 
 
@@ -56,12 +58,28 @@ Create Database
     sudo -u postgres createdb price_monitor --owner ubuntu
 
 
+Import Data
+-----------
+
+If you have an sql file that is already populated:
+
+    sudo -u postgres psql -d price_monitor  -f /path/to/sql/file
+
 Run Migrations
 --------------
+
+Skip this step if you imported data
 
     cd path/to/repo
     env/bin/python manage.py migrate
 
+Systemd
+-------
+
+Service files:
+
+    monitor/price-monitor.service # Runs application server
+    monitor/price-monitor-fetch.service # Restarts every hour
 
 Run Tests
 ---------
@@ -79,6 +97,14 @@ Run manage.py in Development
 
     PAGER=less DJANGO_SETTINGS_MODULE=monitor.settings_development env/bin/python manage.py
 
+
+Run Server in Production
+------------------------
+
+Note in production, only certain domains are allowed.
+So make sure you have nginx set up.
+
+    env/bin/gunicorn monitor.wsgi
 
 
 Run Server in Development
