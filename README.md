@@ -89,7 +89,13 @@ Run Tests
 Fetch
 -----
 
+### Production
+
     env/bin/python manage.py fetch_current_prices
+
+### Development
+
+    PAGER=less DJANGO_SETTINGS_MODULE=monitor.settings_development env/bin/python manage.py fetch_current_prices
 
 
 Run manage.py in Development
@@ -112,6 +118,29 @@ Run Server in Development
 
 
     PAGER=less DJANGO_SETTINGS_MODULE=monitor.settings_development env/bin/python manage.py runserver
+
+
+Low Memory vs Multithreaded
+---------------------------
+
+Two solutions are built.
+To choose between the two, just open this file:
+
+  simpletire/management/commands/fetch_current_prices.py
+
+and call either
+
+    # The low memory version
+    # Single Threaded
+    # Makes use of generators instead of building up long lists
+    fetch_and_write_pages()
+
+or
+
+    # Multi-Threaded
+    # Uses futures
+    # Builds up long lists of things to pass to those futures
+    fetch_and_write_pages_async()
 
 
 Performance
