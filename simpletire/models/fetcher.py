@@ -1,5 +1,5 @@
 import pdb
-import requests
+from requests import get as Get
 import sys
 
 class Fetcher:
@@ -22,9 +22,9 @@ class Fetcher:
 
     def _fetch(self):
         try:
-            page = requests.get(self.url,
-                                timeout=self.TIMEOUT_SECONDS,
-                                headers=self.HEADERS)
+            page = Get(self.url,
+                       timeout=self.TIMEOUT_SECONDS,
+                       headers=self.HEADERS)
         except Exception as ee:
             exception_name = type(ee).__name__
             msg = f'ERROR: {exception_name} accessing {self.url}\n'

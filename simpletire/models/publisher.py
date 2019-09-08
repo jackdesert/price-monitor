@@ -14,6 +14,9 @@ class Publisher:
         cls.write_tires_to_csv()
         cls.write_todays_readings_to_csv()
 
+        # Importing late so that importing this module does not actually load boto3
+        # Therefore saving memory
+        import boto3
         s3 = boto3.client('s3')
 
         s3.upload_file(cls.TIRE_FILE_TEMP_LOCAL,

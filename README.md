@@ -39,7 +39,7 @@ Install
     python3 -m venv env
     env/bin/pip install -r requirements.txt
     # OR
-    env/bin/pip install boto3 bs4 django ipdb jinja2 lxml pandas psycopg2-binary requests redis gunicorn
+    env/bin/pip install bs4 django jinja2 lxml psycopg2-binary requests redis gunicorn
 
 
 

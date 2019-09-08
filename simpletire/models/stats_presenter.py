@@ -1,8 +1,6 @@
-import boto3
 import io
 import pdb
 import math
-import pandas
 from .tire import Tire
 from django.db import connection
 
@@ -57,38 +55,41 @@ class StatsPresenter:
         tires = Tire.objects.raw(self._query_postgres())
         return tires
 
-    def _tires_from_aws_athena(self):
-        # see http://www.ilkkapeltola.fi/2018/04/simple-way-to-query-amazon-athena-in.html
-        client = boto3.client('athena',
-                              region_name='us-west-2')
-
-
-        response = client.start_query_execution(
-                    QueryString=self._query_prestodb(),
-                    QueryExecutionContext={ 'Database': 'price_monitor' },
-                    ResultConfiguration={
-                        'OutputLocation': 's3://bip-price-monitor-athena-result-sets/'
-                      }
-                    )
-
-
-        execution_id = response['QueryExecutionId']
-        status = None
-        while status != self.STATUS_SUCCEEDED:
-            time.sleep(self.POLL_PERIOD_SECONDS)
-            result = client.get_query_execution(QueryExecutionId = execution_id)
-            status = result['QueryExecution']['Status']['State']
-            print('waiting for query to complete')
-
-
-        s3client = boto3.client('s3')
-
-        obj = s3client.get_object(Bucket='bip-price-monitor-athena-result-sets',
-                                  Key= f'{execution_id}.csv')
-
-        df = pandas.read_csv(io.BytesIO(obj['Body'].read()))
-
-        return df.itertuples()
+    #    # THIS METHOD and libraries COMMENTED OUT TO REDUCE MEMORY
+    #    import boto3
+    #    import pandas
+    #    def _tires_from_aws_athena(self):
+    #        # see http://www.ilkkapeltola.fi/2018/04/simple-way-to-query-amazon-athena-in.html
+    #        client = boto3.client('athena',
+    #                              region_name='us-west-2')
+    #
+    #
+    #        response = client.start_query_execution(
+    #                    QueryString=self._query_prestodb(),
+    #                    QueryExecutionContext={ 'Database': 'price_monitor' },
+    #                    ResultConfiguration={
+    #                        'OutputLocation': 's3://bip-price-monitor-athena-result-sets/'
+    #                      }
+    #                    )
+    #
+    #
+    #        execution_id = response['QueryExecutionId']
+    #        status = None
+    #        while status != self.STATUS_SUCCEEDED:
+    #            time.sleep(self.POLL_PERIOD_SECONDS)
+    #            result = client.get_query_execution(QueryExecutionId = execution_id)
+    #            status = result['QueryExecution']['Status']['State']
+    #            print('waiting for query to complete')
+    #
+    #
+    #        s3client = boto3.client('s3')
+    #
+    #        obj = s3client.get_object(Bucket='bip-price-monitor-athena-result-sets',
+    #                                  Key= f'{execution_id}.csv')
+    #
+    #        df = pandas.read_csv(io.BytesIO(obj['Body'].read()))
+    #
+    #        return df.itertuples()
 
 
 
