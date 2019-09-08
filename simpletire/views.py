@@ -9,7 +9,7 @@ from simpletire.models import Catalog
 from simpletire.models import StatsPresenter
 from simpletire.models import Tire
 from simpletire.models import Util
-import ipdb
+import pdb
 
 MAX_TIRES = 200
 

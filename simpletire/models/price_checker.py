@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import ipdb
+import pdb
 import re
 from .fetcher import Fetcher
 

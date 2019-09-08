@@ -4,7 +4,7 @@ from .fetcher import Fetcher
 from .reading import Reading
 from .util import Util
 from .tire import Tire
-import ipdb
+import pdb
 import re
 import traceback
 import io

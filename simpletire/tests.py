@@ -1,6 +1,6 @@
 from django.test import TestCase
 from simpletire.models import Tire
-import ipdb
+import pdb
 
 # Create your tests here.
 

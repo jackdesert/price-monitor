@@ -1,5 +1,5 @@
 from django.db import models
-import ipdb
+import pdb
 from .util import Util
 
 # Import module instead of "from x import X" syntax
