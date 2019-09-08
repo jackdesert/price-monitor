@@ -10,6 +10,10 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/price-monitor
 
+# Numpy increases the thread count, se we set it back at 1
+# See https://github.com/benoitc/gunicorn/issues/1656
+Environment=OMP_NUM_THREADS=1
+
 ExecStart=/home/ubuntu/price-monitor/env/bin/gunicorn monitor.wsgi
 
 TimeoutSec=30
