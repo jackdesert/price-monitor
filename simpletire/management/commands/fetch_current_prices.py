@@ -14,6 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         cat = Catalog()
-        cat.fetch_and_write_pages()
+        cat.fetch_and_write_pages_threaded_small_batches()
         self.stdout.write('done')
 

@@ -31,6 +31,7 @@ class UrlParser:
 class Catalog:
 
     SITEMAP = f'{Util.BASE_URL}/sitemap.xml'
+    SMALL_BATCH_SIZE = 4
     # Format: '205-55r16'
     # (There is only one hyphen)
 
@@ -96,12 +97,6 @@ class Catalog:
 
 
 
-    # SYNCHRONOUS, SINGLE_THREADED
-    def fetch_and_write_pages(self):
-        for index, tire in enumerate(self._tires_to_fetch()):
-            result = tire.build_reading()
-            self._save_result(result, index)
-
 
     def _save_result(self, result, index):
         if isinstance(result, Reading):
@@ -126,12 +121,14 @@ class Catalog:
             return ee
 
 
-    # MULTI_THREADED
-    def fetch_and_write_pages_async(self):
-
-        # Using 10 processes loads my quad-core i7 processor (laptop)
-        # to about 80% on each core, leaving room for other things
-        executor = futures.ProcessPoolExecutor(max_workers=4)
+    # THREADED BULK
+    # Builds up the whole list of tires to fetch
+    # Then builds up a list of results
+    # And finally saves each result
+    # Consumes about 400 MB
+    # Saves about 4 records per second
+    def fetch_and_write_pages_threaded_bulk(self):
+        executor = futures.ThreadPoolExecutor(max_workers=4)
         results = executor.map(self._fetch_tire_and_build_reading, self._tires_to_fetch())
 
         for index, result in enumerate(results):
@@ -139,3 +136,28 @@ class Catalog:
 
 
 
+    # THREADED IN SMALL BATCHES
+    # Only uses threads to fetch small batches of things at a time
+    # Still uses generators so there is no need for a full list of all tires
+    # or all results
+    # Consumes about 150MB
+    # Saves about 2.5 records per second
+    def fetch_and_write_pages_threaded_small_batches(self):
+        executor = futures.ThreadPoolExecutor(max_workers=self.SMALL_BATCH_SIZE)
+        tires = []
+        for main_index, tire in enumerate(self._tires_to_fetch()):
+            tires.append(tire)
+            if len(tires) == self.SMALL_BATCH_SIZE:
+                results = executor.map(self._fetch_tire_and_build_reading, tires)
+                for index, result in enumerate(results):
+                    self._save_result(result, main_index + index)
+                tires.clear()
+
+
+    # SYNCHRONOUS, SINGLE_THREADED
+    # Consumes about 140MB
+    # Saves about 1.2 records per second
+    def fetch_and_write_pages(self):
+        for index, tire in enumerate(self._tires_to_fetch()):
+            result = tire.build_reading()
+            self._save_result(result, index)
