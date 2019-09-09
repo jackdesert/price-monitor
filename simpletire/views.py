@@ -37,14 +37,15 @@ def stats_view(request):
     else:
         limit = MAX_TIRES
 
-    stats_presenter = StatsPresenter(sql_filter, limit)
-    matching_records_count = stats_presenter.matching_records_count()
 
+    matching_records_count = None
     no_matching_tires_hint = ''
     tires = []
     if selected:
         no_matching_tires_hint = 'No tires found matching your search criteria'
+        stats_presenter = StatsPresenter(sql_filter, limit)
         tires = stats_presenter.tire_stats()
+        matching_records_count = stats_presenter.matching_records_count()
 
     show_all_path = ''
     if (len(tires) == MAX_TIRES) and not show_all:
