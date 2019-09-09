@@ -1,0 +1,4 @@
+CMD='sudo journalctl -f -u price-monitor'
+
+echo $CMD
+$CMD
