@@ -4,6 +4,7 @@ from .fetcher import Fetcher
 from .reading import Reading
 from .util import Util
 from .tire import Tire
+from .stats_presenter import StatsPresenter
 import pdb
 import re
 import traceback
@@ -77,7 +78,8 @@ class Catalog:
                     path = url.replace(base_url_with_slash, '')
                     tire = existing_tires.get(path) or Tire(path=path)
                     yield tire
-            print(f'Done yielding tires')
+            print(f'Done yielding tires for {sitemap}')
+            StatsPresenter.load()
 
     def _tires_to_fetch(self):
         tire_ids_to_skip = Reading.tire_ids_with_readings_today()

@@ -1,0 +1,18 @@
+Q: Why is there a table named simpletire_aggregates?
+   Why not just generate these aggregates on the fly?
+A: When moving to the $15/year VPS at snowvps.com,
+   running the aggregate query took about 15 seconds
+   in postgres.
+   (On my local machine, it took two seconds.)
+   Different options were considered for speeding up this process:
+   1. Tune postgres
+   2. Cache each page or each query.
+   3. Add some denormalized fields to the simpletire_tire
+      table such that those could be queried.
+
+   Then along came the idea to simply store the results of the
+   aggregation in a separate table and update it a few times a day.
+   That way the normalized data model remains as it is,
+   AND we get fast access to the data that we use.
+
+

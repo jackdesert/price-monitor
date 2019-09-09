@@ -1,0 +1,4 @@
+CMD='sudo -u postgres psql -d price_monitor'
+
+echo $CMD
+$CMD
