@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from random import SystemRandom
 from datetime import datetime
 from simpletire.models import Catalog
+from simpletire.models import Reading
 from simpletire.models import StatsPresenter
 from simpletire.models import Tire
 from simpletire.models import Util
@@ -13,7 +14,14 @@ import pdb
 
 MAX_TIRES = 200
 
-def stats_view(request):
+def status_view(request):
+    context = {}
+    context['most_recent_reading'] = Reading.most_recent()
+
+    return render(request, 'status.jinja2', context)
+
+
+def index_view(request):
     dimensions = {}
     for dimension in Tire.DIMENSIONS:
         value = request.GET.get(dimension)
@@ -73,9 +81,7 @@ def stats_view(request):
     context['label'] = label
     context['selected'] = selected
 
-
-
-    return render(request, 'stats.jinja2', context)
+    return render(request, 'index.jinja2', context)
 
 
 
