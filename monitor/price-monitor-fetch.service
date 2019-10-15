@@ -10,7 +10,7 @@ User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/price-monitor
 
-ExecStart=/home/ubuntu/price-monitor/env/bin/python manage.py fetch_current_prices
+ExecStart=/home/ubuntu/price-monitor/env/bin/python -u manage.py fetch_current_prices
 
 TimeoutSec=30
 RestartSec=3600
