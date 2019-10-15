@@ -1,3 +1,5 @@
+from datetime import datetime
+from datetime import timedelta
 from django.db import models
 import pdb
 import re
@@ -31,6 +33,7 @@ class Tire(models.Model):
 
 
     PENNIES_PER_DOLLAR = 100
+    MIN_FETCH_PERIOD_SECONDS = 7 * 24 * 3600
 
 
     def build_reading(self):
@@ -95,6 +98,19 @@ class Tire(models.Model):
     def readings(self):
         return self.reading_set(manager='_default_manager').all()
 
+    def ok_to_fetch(self):
+        # Indicates whether it is time to fetch this tire
+        if not self.last_fetch_at:
+            return True
+        line_in_sand = datetime.now() - timedelta(days=self.MIN_DAYS_BETWEEN_FETCHES)
+        ready = self.last_fetch_at < line_in_sand
+        if ready:
+            print('OK to Fetch')
+        else:
+            print(f'NOT FETCHING because last_fetch_at is {self.last_fetch_at}')
+
+        return ready
+
     def __repr__(self):
         return f'Tire({self.name})'
 
@@ -121,6 +137,9 @@ class Tire(models.Model):
         self.section_width  = int(matches[1])
         self.aspect_ratio   = int(matches[2])
         self.wheel_diameter = int(matches[3])
+
+    def fetched_within_period(self):
+        return Util.fetched_within_period(self.path, self.MIN_FETCH_PERIOD_SECONDS)
 
     @classmethod
     def valid_dimensions(cls, dimensions):

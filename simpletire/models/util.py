@@ -15,6 +15,8 @@ class Util:
     RECENT_PREPEND = 'simpletire-404--'
     DURATION_OF_404_IN_SECONDS = 3600 * 24 * 30 # One month
 
+    FETCH_PREPEND = 'fetched-'
+
     @classmethod
     def today_string(cls):
         return newdate.today().strftime('%F')
@@ -45,5 +47,23 @@ class Util:
     @classmethod
     def _404_key(cls, path):
         return f'{cls.RECENT_PREPEND}{path}'
+
+    @classmethod
+    def fetched_within_period(cls, path, period_seconds):
+        # This method allows you to rate limit fetches to particular urls
+        # by writing the url to redis with an expiration
+        key = f'{cls.FETCH_PREPEND}{path}'
+
+        # When ttl is -2, it means key not found
+        # When ttl is -1, it means key present but has no expiration
+        # When ttl is greater than 0, it means secons remaining
+        ttl = cls.REDIS.ttl(key)
+
+        if ttl > 0:
+            print(f'{path} already fetched within period. ttl = {ttl / (24 * 3600)} days')
+            return True
+        cls.REDIS.set(key, 1, ex=period_seconds)
+        print(f'{path} not fetched within period. Go ahead.')
+        return False
 
 

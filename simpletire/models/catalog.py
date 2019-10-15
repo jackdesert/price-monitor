@@ -5,6 +5,7 @@ from .reading import Reading
 from .util import Util
 from .tire import Tire
 from .stats_presenter import StatsPresenter
+from time import sleep
 import pdb
 import re
 import traceback
@@ -33,6 +34,7 @@ class Catalog:
 
     SITEMAP = f'{Util.BASE_URL}/sitemap.xml'
     SMALL_BATCH_SIZE = 4
+    DELAY_SECONDS = 8
     # Format: '205-55r16'
     # (There is only one hyphen)
 
@@ -156,10 +158,15 @@ class Catalog:
                 tires.clear()
 
 
-    # SYNCHRONOUS, SINGLE_THREADED
+    # SYNCHRONOUS, SINGLE_THREADED, ENFORCES DELAY and MIN_DAYS_BETWEEN_FETCHES
     # Consumes about 140MB
     # Saves about 1.2 records per second
     def fetch_and_write_pages(self):
         for index, tire in enumerate(self._tires_to_fetch()):
-            result = tire.build_reading()
-            self._save_result(result, index)
+            if not tire.fetched_within_period():
+                result = tire.build_reading()
+                self._save_result(result, index)
+                sleep(self.DELAY_SECONDS)
+            if index % 1000 == 0:
+                # Every N cycles, load the data
+                StatsPresenter.load()
