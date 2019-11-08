@@ -185,33 +185,7 @@ Files are in doc/
 Backlog
 -------
 
-- Find a new host
-
-- What is most important for debut launch?
-  - cron incantation
-  - slack exception reporting ?
-  - test suite that exercises controller and verifies all logic paths?
-  - fantastic artwork?
-  - Divine writeup?
-  - Submit to search engines?
-  - Feedback from more people?
-  - Talking to people about it after launch?
-
-- Find out why there is a keyerror when fetching some tires
-- Hide options if not tires match selection
-- tire., tyre., tires., tyres. => redirect to canonical site
-- change zero price to N/A (default value)
-
-
-
-- cron incantation
-- Decide whether only tires currently in stock should be displayed on stats page
-- Decide whether only in-stock readings should be used for calculating mean, max, stddev_samp
-  (probably so, as they may ignore prices while it's out of stock)
-- Consider whether to use the search functionality on simpletire.com to
-  filter by the appropriate tire size. (As opposed to reading the sitemaps)
-  The benefit is that you could sort by price and only show the cheap ones.
-  But then what if a cheap tire goes expensive for a time...now your stats are impure..
+- More padding around search box
 
 
 Icebox

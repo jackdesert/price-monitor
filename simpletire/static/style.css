@@ -130,6 +130,11 @@ h1, h2, h3, h4, h5, h6
   font-family: serif;
 }
 
+input[type="text"]
+{
+  margin: 0.5rem 0;
+}
+
 .call-to-action
 {
   font-size: 2rem;
@@ -141,7 +146,7 @@ h1, h2, h3, h4, h5, h6
   width: 8.5em; /* Note em, not rem, so that width scales with text */
 }
 
-select, option
+select, option, input
 {
   font-size: 1.3rem;
 }
