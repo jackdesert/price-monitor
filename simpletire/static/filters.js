@@ -4,6 +4,8 @@ var bindFilters = function(){
         aspect_ratioSelector = document.getElementById('aspect_ratio'),
         wheelDiameterSelector = document.getElementById('wheel_diameter'),
         allSelectors = document.querySelectorAll('select'),
+        nameSearch = document.getElementById('name'),
+        nameSearchButton = document.getElementById('name-search-button'),
 
         applyFilters = function(){
             var queries = [],
@@ -20,6 +22,10 @@ var bindFilters = function(){
                     queries.push(query)
                 }
             })
+
+            if (nameSearch && nameSearch.value != ''){
+                queries.push(`name=${nameSearch.value}`)
+            }
 
             elementsToHide.forEach(function(el){
                 makeTransparent(el)
@@ -38,6 +44,15 @@ var bindFilters = function(){
     allSelectors.forEach(function(s){
         s.addEventListener('input', applyFilters)
     })
+
+    nameSearch.addEventListener('keyup', function(key){
+        if (key.key === 'Enter'){
+            applyFilters()
+        }
+    })
+
+    nameSearchButton.addEventListener('click', applyFilters)
+
 
 }
 

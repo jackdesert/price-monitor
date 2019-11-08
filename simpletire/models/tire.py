@@ -20,8 +20,11 @@ class Tire(models.Model):
     utqg           = models.SmallIntegerField(null=True)
 
     SPACE = ' '
-    DIMENSIONS = {'section_width', 'aspect_ratio', 'wheel_diameter'}
-    OPERATORS = dict(section_width='>=', aspect_ratio='IN', wheel_diameter='=')
+    DIMENSIONS = {'section_width', 'aspect_ratio', 'wheel_diameter', 'name'}
+    OPERATORS = dict(section_width='>=',
+                     aspect_ratio='IN',
+                     wheel_diameter='=',
+                     name='ILIKE')
     ASPECT_RATIO_SPACING = 5
     DIMENSION_CHAR_COUNT = dict(section_width=3, aspect_ratio=2, wheel_diameter=2)
     MM_PER_INCH = 25.4
@@ -144,7 +147,10 @@ class Tire(models.Model):
     @classmethod
     def valid_dimensions(cls, dimensions):
         for dimension, value in dimensions.items():
-            if len(str(value)) != cls.DIMENSION_CHAR_COUNT[dimension]:
+            if dimension == 'name':
+                # No requirements on name
+                pass
+            elif len(str(value)) != cls.DIMENSION_CHAR_COUNT[dimension]:
                 return False
         return True
 
@@ -169,6 +175,9 @@ class Tire(models.Model):
             op = cls.OPERATORS[dimension]
             if dimension == 'aspect_ratio':
                 value = f'({value}, {value + cls.ASPECT_RATIO_SPACING}, {value - cls.ASPECT_RATIO_SPACING})'
+            elif dimension == 'name':
+                # Double up the percent sign so it passes through to db
+                value = f"'%%{value}%%'"
             statements.append(f'{conjunction} {dimension} {op} {value}')
             conjunction = 'AND'
 

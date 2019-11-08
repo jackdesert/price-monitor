@@ -25,8 +25,11 @@ def index_view(request):
     dimensions = {}
     for dimension in Tire.DIMENSIONS:
         value = request.GET.get(dimension)
-        if value:
-            dimensions[dimension] = int(value)
+        if not value:
+            continue
+        if dimension != 'name':
+            value = int(value)
+        dimensions[dimension] = value
 
     if not Tire.valid_dimensions(dimensions):
         return redirect('/')
@@ -34,6 +37,7 @@ def index_view(request):
     sql_filter = Tire.sql_filter(**dimensions)
 
 
+    # selected is merely used to add the "selected" to the html option tag
     selected = { v: 'selected' for k,v in dimensions.items() }
 
     label = label_from_dimensions(dimensions)
@@ -49,7 +53,7 @@ def index_view(request):
     matching_records_count = None
     no_matching_tires_hint = ''
     tires = []
-    if selected:
+    if dimensions:
         no_matching_tires_hint = 'No tires found matching your search criteria'
         stats_presenter = StatsPresenter(sql_filter, limit)
         tires = stats_presenter.tire_stats()
@@ -80,6 +84,7 @@ def index_view(request):
     context['no_matching_tires_hint'] = no_matching_tires_hint
     context['label'] = label
     context['selected'] = selected
+    context['name'] = dimensions.get('name')
 
     return render(request, 'index.jinja2', context)
 
@@ -88,20 +93,23 @@ def index_view(request):
 
 
 def label_from_dimensions(dimensions):
-    output = ''
+    output = []
     if dimensions.get('wheel_diameter'):
-        output = f"{dimensions['wheel_diameter']}-inch Tires"
+        output.append(f"{dimensions['wheel_diameter']}-inch Tires")
     else:
-        output = 'Tires'
+        output.append('Tires')
 
     conjunction = 'with'
     if dimensions.get('section_width'):
-        output += f" at least {dimensions['section_width']} wide"
+        output.append(f" at least {dimensions['section_width']} wide")
         conjunction = 'and'
     if dimensions.get('aspect_ratio'):
-        output += f" {conjunction} aspect ratio near {dimensions['aspect_ratio']}"
+        output.append(f" {conjunction} aspect ratio near {dimensions['aspect_ratio']}")
+    name = dimensions.get('name')
+    if name:
+        output.append(f' matching "{name}"')
 
-    return output
+    return ' '.join(output)
 
 
 # The hard way that doesn't work because super() fails if no arguments
