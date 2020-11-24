@@ -5,7 +5,7 @@ import sys
 class Fetcher:
 
     URL_404 = 'https://simpletire.com/errors/error400'
-    HEADERS = { 'User-Agent': 'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)' }
+    HEADERS = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0' }
     TIMEOUT_SECONDS = 10
 
     class Error404(Exception):
